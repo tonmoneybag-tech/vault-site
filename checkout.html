@@ -913,7 +913,7 @@ textField.addEventListener('input', () => {
 /* =============================================================
    SUBMIT
    ============================================================= */
-function submitOrder() {
+async function submitOrder() {
   const agree = document.getElementById('field-agree').checked;
   if (!agree) {
     document.getElementById('error-agree').classList.add('visible');
@@ -921,18 +921,55 @@ function submitOrder() {
   }
   document.getElementById('error-agree').classList.remove('visible');
 
+  const submitBtn = document.getElementById('submit-btn');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span>Отправляем заявку...</span>';
+
   // Generate order ID
   const orderId = 'VLT-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-  document.getElementById('order-id').textContent = '#' + orderId;
 
-  // Show success screen
-  document.querySelectorAll('[data-step]').forEach(el => el.classList.add('hidden-step'));
-  document.querySelector('[data-step="success"]').classList.remove('hidden-step');
+  // Собираем данные для отправки в Telegram
+  const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price, 0);
+  const payload = {
+    type: 'advertiser_order',
+    orderId: orderId,
+    name: (document.getElementById('field-name').value || '').trim(),
+    telegram: (document.getElementById('field-telegram').value || '').trim(),
+    email: (document.getElementById('field-email').value || '').trim(),
+    adText: (document.getElementById('field-text').value || '').trim(),
+    adUrl: (document.getElementById('field-url').value || '').trim(),
+    date: (document.getElementById('field-date').value || '').trim(),
+    payment: selectedPayment,
+    items: ORDER_ITEMS.map(i => ({ name: i.name, format: i.format, price: i.price })),
+    total: subtotal
+  };
 
-  // Hide stepper
-  document.querySelector('.stepper').style.display = 'none';
+  // Нормализуем TG
+  if (payload.telegram && !payload.telegram.startsWith('@') && !payload.telegram.startsWith('http')) {
+    payload.telegram = '@' + payload.telegram;
+  }
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  try {
+    const response = await fetch('/api/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) throw new Error('Server error');
+
+    // Успех
+    document.getElementById('order-id').textContent = '#' + orderId;
+    document.querySelectorAll('[data-step]').forEach(el => el.classList.add('hidden-step'));
+    document.querySelector('[data-step="success"]').classList.remove('hidden-step');
+    document.querySelector('.stepper').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+    alert('Не удалось отправить заявку. Попробуйте ещё раз или напишите @maxvane в Telegram.');
+  }
 }
 
 /* =============================================================

@@ -705,26 +705,179 @@
   <svg class="sparkle" style="top:40%; right:15%; width:32px; height:32px; color:rgba(255,255,255,0.5); animation-delay:1s"><use href="#sparkle"/></svg>
   <svg class="sparkle" style="bottom:20%; left:40%; width:18px; height:18px; color:rgba(255,255,255,0.6); animation-delay:2s"><use href="#sparkle"/></svg>
 
-  <div class="max-w-3xl mx-auto px-6 lg:px-8 relative text-center">
-    <div class="vault-logo-white inline-block float-med mb-6" style="width:56px;height:56px"></div>
-    <h2 class="text-4xl md:text-6xl font-display mb-6">
-      Готовы начать?
-    </h2>
-    <p class="text-lg md:text-xl mb-10 font-medium" style="color:rgba(255,255,255,0.85)">
-      Напишите нашему менеджеру в Telegram — подключим ваш канал в течение дня и проведём по всем настройкам.
-    </p>
-
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-      <a href="https://t.me/maxvane" class="btn-white">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A73E8"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-        Написать @maxvane
-      </a>
+  <div class="max-w-2xl mx-auto px-6 lg:px-8 relative">
+    <div class="text-center mb-10">
+      <div class="vault-logo-white inline-block float-med mb-6" style="width:56px;height:56px"></div>
+      <h2 class="text-4xl md:text-6xl font-display mb-4">
+        Подключить канал
+      </h2>
+      <p class="text-lg md:text-xl font-medium" style="color:rgba(255,255,255,0.85)">
+        Оставьте заявку — мы проверим канал и подключим в течение дня.
+      </p>
     </div>
 
-    <p class="text-sm font-medium" style="color:rgba(255,255,255,0.6)">
-      Или напишите на <a href="mailto:tonmoneybag@gmail.com" class="underline hover:text-white">tonmoneybag@gmail.com</a>
+    <!-- FORM -->
+    <form id="apply-form" class="space-y-4 mb-6" style="background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); padding:28px; border-radius:24px">
+
+      <!-- Honeypot для защиты от ботов (невидимое поле) -->
+      <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
+
+      <div>
+        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Ссылка на канал *</label>
+        <input type="text" name="channelLink" required placeholder="https://t.me/your_channel или @username" class="form-input">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Подписчиков *</label>
+          <input type="text" name="subscribers" required placeholder="Например, 50000" class="form-input">
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Тематика *</label>
+          <select name="topic" required class="form-input">
+            <option value="">Выберите</option>
+            <option>Игровые</option>
+            <option>Спорт</option>
+            <option>Крипта</option>
+            <option>Технологии и ИИ</option>
+            <option>Путешествия</option>
+            <option>Бизнес</option>
+            <option>Маркетинг</option>
+            <option>Экономика</option>
+            <option>Авто</option>
+            <option>Региональные</option>
+            <option>Стримеры и блогеры</option>
+            <option>Новости и СМИ</option>
+            <option>Кино</option>
+            <option>Другое</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Цена 1/24, ₽</label>
+          <input type="text" name="price" placeholder="Опционально" class="form-input">
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Ваш Telegram *</label>
+          <input type="text" name="telegram" required placeholder="@username" class="form-input">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Комментарий</label>
+        <textarea name="comment" rows="3" placeholder="Особенности канала, пожелания по работе..." class="form-input" style="resize:vertical;min-height:80px"></textarea>
+      </div>
+
+      <button type="submit" id="apply-submit" class="btn-white w-full justify-center !py-4">
+        <span id="apply-submit-text">Отправить заявку</span>
+      </button>
+
+      <p class="text-xs text-center font-medium" style="color:rgba(255,255,255,0.6)">
+        Нажимая «Отправить», вы соглашаетесь с <a href="/privacy" class="underline hover:text-white" style="color:rgba(255,255,255,0.8)">Политикой обработки персональных данных</a>
+      </p>
+    </form>
+
+    <!-- SUCCESS STATE -->
+    <div id="apply-success" class="hidden text-center p-8 rounded-3xl" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3)">
+      <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background:#10B981">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="text-2xl font-display mb-2">Заявка отправлена!</h3>
+      <p class="font-medium mb-4" style="color:rgba(255,255,255,0.9)">
+        Мы свяжемся с вами в Telegram в течение 24 часов.
+      </p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div id="apply-error" class="hidden text-center p-6 rounded-2xl" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3)">
+      <p class="font-semibold mb-2">Не удалось отправить заявку</p>
+      <p class="text-sm" style="color:rgba(255,255,255,0.8)">Попробуйте ещё раз или напишите напрямую <a href="https://t.me/maxvane" class="underline font-bold">@maxvane</a></p>
+    </div>
+
+    <p class="text-sm font-medium text-center mt-6" style="color:rgba(255,255,255,0.6)">
+      Или напишите напрямую <a href="https://t.me/maxvane" class="underline hover:text-white">@maxvane</a> в Telegram
     </p>
   </div>
+
+  <style>
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid transparent;
+      color: #111A2B;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: inherit;
+      transition: all 0.15s;
+      box-sizing: border-box;
+    }
+    .form-input:focus {
+      outline: none;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+    }
+    .form-input::placeholder { color: #94A3B8; font-weight: 500; }
+    select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M6 9l6 6 6-6' stroke='%23111A2B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right: 44px; }
+  </style>
+
+  <script>
+    (function() {
+      const form = document.getElementById('apply-form');
+      const submitBtn = document.getElementById('apply-submit');
+      const submitText = document.getElementById('apply-submit-text');
+      const successBox = document.getElementById('apply-success');
+      const errorBox = document.getElementById('apply-error');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorBox.classList.add('hidden');
+
+        const formData = new FormData(form);
+        const data = {
+          type: 'channel_apply',
+          channelLink: (formData.get('channelLink') || '').trim(),
+          subscribers: (formData.get('subscribers') || '').trim(),
+          topic: (formData.get('topic') || '').trim(),
+          price: (formData.get('price') || '').trim(),
+          telegram: (formData.get('telegram') || '').trim(),
+          comment: (formData.get('comment') || '').trim(),
+          website: (formData.get('website') || '').trim()
+        };
+
+        // Нормализуем Telegram
+        if (data.telegram && !data.telegram.startsWith('@') && !data.telegram.startsWith('http')) {
+          data.telegram = '@' + data.telegram;
+        }
+
+        submitBtn.disabled = true;
+        submitText.textContent = 'Отправляем...';
+
+        try {
+          const response = await fetch('/api/apply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            form.classList.add('hidden');
+            successBox.classList.remove('hidden');
+            successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            throw new Error('Server error');
+          }
+        } catch (err) {
+          errorBox.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitText.textContent = 'Отправить заявку';
+        }
+      });
+    })();
+  </script>
 </section>
 
 <!-- ================= FAQ ================= -->
