@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Политика конфиденциальности — Vault</title>
+<meta name="description" content="Политика обработки персональных данных сервиса Vault">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800;900&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0A73E8">
+
+<style>
+  :root {
+    --vault-blue: #0A73E8;
+    --vault-blue-dark: #085CBA;
+    --vault-sky: #E4F3FF;
+    --vault-sky-soft: #F4FAFF;
+    --vault-ink: #111A2B;
+    --vault-ink-muted: #4B5569;
+    --vault-logo-url: url('data:image/png;base64,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');
+  }
+
+  * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  body {
+    font-family: 'Onest', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--vault-sky-soft);
+    color: var(--vault-ink);
+  }
+
+  h1, h2, h3, .font-display { font-family: 'Unbounded', 'Onest', sans-serif; }
+
+  .vault-logo {
+    display: inline-block;
+    background-image: var(--vault-logo-url);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255,255,255,0.85);
+    border-bottom: 1px solid rgba(10,115,232,0.08);
+  }
+
+  .vault-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid rgba(10,115,232,0.08);
+    box-shadow: 0 2px 12px rgba(17,26,43,0.04);
+  }
+
+  .badge-soft {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10,115,232,0.08);
+    color: var(--vault-blue);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    border: 1px solid rgba(10,115,232,0.12);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--vault-ink-muted);
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 999px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    text-decoration: none;
+  }
+  .btn-ghost:hover { color: var(--vault-ink); background: rgba(17,26,43,0.05); }
+
+  .legal-content h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    color: var(--vault-ink);
+    letter-spacing: -0.02em;
+  }
+  .legal-content h2:first-child { margin-top: 0; }
+  .legal-content h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    color: var(--vault-ink);
+  }
+  .legal-content p {
+    color: var(--vault-ink-muted);
+    font-weight: 500;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+  .legal-content ul {
+    margin-bottom: 16px;
+    padding-left: 24px;
+  }
+  .legal-content li {
+    color: var(--vault-ink-muted);
+    font-weight: 500;
+    line-height: 1.7;
+    margin-bottom: 6px;
+    font-size: 15px;
+    list-style-type: disc;
+  }
+  .legal-content strong { color: var(--vault-ink); font-weight: 700; }
+  .legal-content a { color: var(--vault-blue); font-weight: 600; }
+  .legal-content a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-4">
+    <a href="/" class="flex items-center gap-2 flex-shrink-0" style="text-decoration:none">
+      <div class="vault-logo" style="width:32px;height:32px"></div>
+      <span class="text-[22px] font-black tracking-tight" style="color:var(--vault-ink); font-family:'Unbounded'">Vault</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-[15px] font-semibold">
+      <a href="/catalog" class="hover:text-[var(--vault-blue)] transition" style="color:var(--vault-ink)">Каталог</a>
+      <a href="/" class="hover:text-[var(--vault-blue)] transition" style="color:var(--vault-ink)">Рекламодателям</a>
+      <a href="/authors" class="hover:text-[var(--vault-blue)] transition" style="color:var(--vault-ink)">Авторам</a>
+    </nav>
+    <a href="/" class="btn-ghost">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      На главную
+    </a>
+  </div>
+</header>
+
+<section class="pt-10 md:pt-14 pb-8">
+  <div class="max-w-4xl mx-auto px-4 md:px-8">
+    <span class="badge-soft mb-4">Юридический документ</span>
+    <h1 class="text-3xl md:text-5xl font-display mt-4 mb-3" style="letter-spacing:-0.03em; line-height:1.05">
+      Политика обработки<br>персональных данных
+    </h1>
+    <p class="text-base font-medium" style="color:var(--vault-ink-muted)">
+      Действует с 22 апреля 2026 года
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="max-w-4xl mx-auto px-4 md:px-8">
+    <div class="vault-card p-6 md:p-10 legal-content">
+
+      <h2>1. Общие положения</h2>
+      <p>
+        Настоящая Политика обработки персональных данных (далее — «Политика») определяет порядок обработки персональных данных и меры по обеспечению их безопасности, предпринимаемые сервисом <strong>Vault</strong> (далее — «Сервис», «мы») в отношении пользователей сайта <a href="https://vaultads.ru">vaultads.ru</a> (далее — «Сайт»).
+      </p>
+      <p>
+        Политика разработана в соответствии с требованиями Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных».
+      </p>
+      <p>
+        Используя Сайт и оставляя на нём свои данные, Пользователь подтверждает, что ознакомился с настоящей Политикой и согласен с её условиями.
+      </p>
+
+      <h2>2. Термины и определения</h2>
+      <p>
+        <strong>Персональные данные</strong> — любая информация, относящаяся прямо или косвенно к определённому или определяемому физическому лицу.
+      </p>
+      <p>
+        <strong>Обработка персональных данных</strong> — любое действие с персональными данными: сбор, запись, систематизация, накопление, хранение, уточнение, использование, передача, обезличивание, блокирование, удаление, уничтожение.
+      </p>
+      <p>
+        <strong>Пользователь</strong> — любое физическое лицо, использующее Сайт и его функциональные возможности.
+      </p>
+      <p>
+        <strong>Рекламодатель</strong> — Пользователь, размещающий рекламу через Сервис.
+      </p>
+      <p>
+        <strong>Владелец канала</strong> — Пользователь, предоставляющий свой Telegram-канал для размещения рекламы через Сервис.
+      </p>
+
+      <h2>3. Какие данные мы собираем</h2>
+      <p>
+        Сервис собирает только те персональные данные, которые необходимы для оказания услуг. К ним относятся:
+      </p>
+      <ul>
+        <li>Имя или название компании (для обращения и идентификации)</li>
+        <li>Никнейм в Telegram (для связи)</li>
+        <li>Адрес электронной почты (опционально, для резервной связи)</li>
+        <li>Рекламные материалы: текст, ссылки, медиафайлы, предоставляемые для размещения</li>
+        <li>Адрес криптовалютного кошелька (для Владельцев каналов, для получения выплат)</li>
+        <li>Информация о канале: название, тематика, цены размещения, ссылка (для Владельцев каналов)</li>
+        <li>Техническая информация: IP-адрес, тип и версия браузера, операционная система, данные о посещении страниц</li>
+      </ul>
+
+      <h2>4. Цели обработки данных</h2>
+      <p>
+        Мы обрабатываем персональные данные Пользователей исключительно для следующих целей:
+      </p>
+      <ul>
+        <li>Регистрация и идентификация Пользователя на Сайте</li>
+        <li>Обработка и выполнение заказов на размещение рекламы</li>
+        <li>Взаимодействие между Рекламодателем и Владельцем канала</li>
+        <li>Проведение выплат Владельцам каналов</li>
+        <li>Консультационная поддержка через менеджера Сервиса</li>
+        <li>Улучшение работы Сайта и качества услуг</li>
+        <li>Анализ посещаемости и пользовательского поведения (обезличенно)</li>
+        <li>Соблюдение требований законодательства Российской Федерации</li>
+      </ul>
+
+      <h2>5. Правовые основания обработки</h2>
+      <p>Обработка персональных данных осуществляется на следующих основаниях:</p>
+      <ul>
+        <li>Согласие Пользователя на обработку персональных данных</li>
+        <li>Необходимость исполнения договора (Оферты), стороной которого является Пользователь</li>
+        <li>Необходимость соблюдения законодательства Российской Федерации</li>
+      </ul>
+
+      <h2>6. Как мы защищаем данные</h2>
+      <p>
+        Сервис применяет организационные и технические меры для защиты персональных данных от несанкционированного или случайного доступа, уничтожения, изменения, блокирования, копирования и распространения:
+      </p>
+      <ul>
+        <li>Шифрование данных при передаче (HTTPS/TLS)</li>
+        <li>Ограничение доступа сотрудников к персональным данным</li>
+        <li>Регулярное резервное копирование</li>
+        <li>Использование надёжных поставщиков услуг хостинга и инфраструктуры</li>
+        <li>Контроль за соблюдением требований законодательства</li>
+      </ul>
+
+      <h2>7. Передача данных третьим лицам</h2>
+      <p>
+        Сервис не продаёт и не передаёт персональные данные Пользователей третьим лицам, за исключением следующих случаев:
+      </p>
+      <ul>
+        <li>Передача Владельцу канала информации, необходимой для согласования и публикации рекламного размещения</li>
+        <li>Передача данных поставщикам услуг, с которыми заключены соглашения о конфиденциальности (платёжные системы, хостинг-провайдеры)</li>
+        <li>Передача данных по требованию уполномоченных государственных органов в случаях, предусмотренных законодательством</li>
+      </ul>
+
+      <h2>8. Файлы cookie и аналитика</h2>
+      <p>
+        Сайт может использовать файлы cookie для улучшения работы и анализа посещаемости. Cookie — это небольшие текстовые файлы, которые сохраняются в браузере Пользователя.
+      </p>
+      <p>
+        Мы используем системы веб-аналитики для сбора обезличенной информации о посещаемости Сайта. Полученные данные используются только в агрегированном виде и не позволяют идентифицировать конкретного Пользователя.
+      </p>
+      <p>
+        Пользователь может отключить использование cookie в настройках своего браузера. При этом некоторые функции Сайта могут стать недоступны.
+      </p>
+
+      <h2>9. Хранение данных</h2>
+      <p>
+        Персональные данные хранятся в течение срока, необходимого для достижения целей обработки, или в течение срока, установленного законодательством.
+      </p>
+      <p>
+        После достижения целей обработки или при отзыве согласия Пользователя данные удаляются или обезличиваются, если законодательство не требует их хранения.
+      </p>
+
+      <h2>10. Права Пользователя</h2>
+      <p>
+        В соответствии с законодательством Российской Федерации Пользователь имеет право:
+      </p>
+      <ul>
+        <li>Получать информацию об обработке своих персональных данных</li>
+        <li>Требовать уточнения, блокирования или уничтожения своих данных</li>
+        <li>Отзывать согласие на обработку персональных данных</li>
+        <li>Обжаловать действия Сервиса в уполномоченном органе по защите прав субъектов персональных данных (Роскомнадзор)</li>
+      </ul>
+      <p>
+        Для реализации своих прав Пользователь может направить обращение на адрес: <a href="mailto:tonmoneybag@gmail.com">tonmoneybag@gmail.com</a>.
+      </p>
+
+      <h2>11. Передача данных в рамках выплат в криптовалюте</h2>
+      <p>
+        Выплаты Владельцам каналов осуществляются в криптовалюте (USDT и другие). Для проведения выплаты Владелец канала предоставляет адрес криптовалютного кошелька, который обрабатывается как персональные данные.
+      </p>
+      <p>
+        Сервис не хранит приватные ключи кошельков Пользователей и не несёт ответственности за сохранность средств на их кошельках после проведения выплаты.
+      </p>
+
+      <h2>12. Изменения Политики</h2>
+      <p>
+        Сервис имеет право вносить изменения в настоящую Политику. Новая редакция Политики вступает в силу с момента её размещения на Сайте. Рекомендуем периодически проверять актуальную версию Политики.
+      </p>
+      <p>
+        Продолжение использования Сайта после внесения изменений означает согласие Пользователя с новой редакцией Политики.
+      </p>
+
+      <h2>13. Контакты</h2>
+      <p>
+        По всем вопросам, связанным с обработкой персональных данных, можно обратиться:
+      </p>
+      <ul>
+        <li>Email: <a href="mailto:tonmoneybag@gmail.com">tonmoneybag@gmail.com</a></li>
+        <li>Telegram: <a href="https://t.me/maxvane" target="_blank" rel="noopener">@maxvane</a></li>
+      </ul>
+
+      <p class="mt-12 text-sm" style="color:var(--vault-ink-muted)">
+        Последнее обновление: 22 апреля 2026 года
+      </p>
+    </div>
+
+    <div class="mt-8 text-center">
+      <a href="/" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Вернуться на главную
+      </a>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
