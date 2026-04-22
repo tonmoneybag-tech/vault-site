@@ -325,6 +325,11 @@
     0%,100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
   }
+
+  .card-link { transition: transform 0.2s ease; }
+  .card-link:hover { transform: translateY(-4px); }
+  .card-link:hover .vault-card { box-shadow: 0 20px 40px rgba(10,115,232,0.15); }
+
 </style>
 
 <!-- Open Graph / Twitter -->
@@ -687,27 +692,17 @@
     <div class="text-center max-w-3xl mx-auto mb-16">
       <span class="badge-soft mb-6">Каталог каналов</span>
       <h2 class="text-4xl md:text-6xl font-display mt-6 mb-6" style="color:var(--vault-ink)">
-        Найдите идеальный канал<br>за пару кликов
+        Примеры каналов<br>в нашем каталоге
       </h2>
       <p class="text-lg font-medium" style="color:var(--vault-ink-muted)">
-        Фильтры по темам, охвату, вовлечённости и цене помогут выбрать лучшие площадки под ваш продукт.
+        Всего 99 проверенных каналов с суммарным охватом 20M+ подписчиков. Гейминг, спорт, крипта, технологии и другие тематики.
       </p>
-    </div>
-
-    <!-- Filter chips -->
-    <div class="flex flex-wrap gap-3 justify-center mb-10">
-      <button class="px-5 py-2.5 rounded-full font-bold text-sm" style="background:var(--vault-blue); color:white; box-shadow: 0 4px 16px rgba(10,115,232,0.3)">Все</button>
-      <button class="px-5 py-2.5 rounded-full font-bold text-sm bg-white border border-[rgba(10,115,232,0.15)]" style="color:var(--vault-ink)">Игровые</button>
-      <button class="px-5 py-2.5 rounded-full font-bold text-sm bg-white border border-[rgba(10,115,232,0.15)]" style="color:var(--vault-ink)">Спорт</button>
-      <button class="px-5 py-2.5 rounded-full font-bold text-sm bg-white border border-[rgba(10,115,232,0.15)]" style="color:var(--vault-ink)">Крипта</button>
-      <button class="px-5 py-2.5 rounded-full font-bold text-sm bg-white border border-[rgba(10,115,232,0.15)]" style="color:var(--vault-ink)">Технологии</button>
-      <button class="px-5 py-2.5 rounded-full font-bold text-sm bg-white border border-[rgba(10,115,232,0.15)]" style="color:var(--vault-ink)">Путешествия</button>
     </div>
 
     <!-- Channel cards grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Card 1: TON AirDrop RU -->
-      <div class="vault-card p-6">
+      <a href="/catalog" class="card-link" style="text-decoration:none;color:inherit;display:block"><div class="vault-card p-6">
         <div class="flex items-start gap-4 mb-5">
           <div class="channel-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">T</div>
           <div class="flex-1 min-w-0">
@@ -728,12 +723,12 @@
             <div class="text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Цена</div>
             <div class="font-black text-lg gradient-text">29 000 ₽</div>
           </div>
-          <button class="px-4 py-2 rounded-full font-bold text-sm" style="background:var(--vault-blue); color:white">В корзину</button>
+          <span class="inline-flex items-center gap-1 font-bold text-sm" style="color:var(--vault-blue)">Подробнее <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-top:1px"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
-      </div>
+      </div></a>
 
       <!-- Card 2: Тачки и Точка -->
-      <div class="vault-card p-6">
+      <a href="/catalog" class="card-link" style="text-decoration:none;color:inherit;display:block"><div class="vault-card p-6">
         <div class="flex items-start gap-4 mb-5">
           <div class="channel-avatar" style="background:linear-gradient(135deg,#DC2626,#991B1B)">Т</div>
           <div class="flex-1 min-w-0">
@@ -754,12 +749,12 @@
             <div class="text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Цена</div>
             <div class="font-black text-lg gradient-text">145 000 ₽</div>
           </div>
-          <button class="px-4 py-2 rounded-full font-bold text-sm" style="background:var(--vault-blue); color:white">В корзину</button>
+          <span class="inline-flex items-center gap-1 font-bold text-sm" style="color:var(--vault-blue)">Подробнее <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-top:1px"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
-      </div>
+      </div></a>
 
       <!-- Card 3: Мир Brawl Stars -->
-      <div class="vault-card p-6">
+      <a href="/catalog" class="card-link" style="text-decoration:none;color:inherit;display:block"><div class="vault-card p-6">
         <div class="flex items-start gap-4 mb-5">
           <div class="channel-avatar" style="background:linear-gradient(135deg,#8B5CF6,#6D28D9)">М</div>
           <div class="flex-1 min-w-0">
@@ -780,12 +775,12 @@
             <div class="text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Цена</div>
             <div class="font-black text-base gradient-text">от 320 ₽ / 1K охват</div>
           </div>
-          <button class="px-4 py-2 rounded-full font-bold text-sm" style="background:var(--vault-blue); color:white">В корзину</button>
+          <span class="inline-flex items-center gap-1 font-bold text-sm" style="color:var(--vault-blue)">Подробнее <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-top:1px"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
-      </div>
+      </div></a>
 
       <!-- Card 4: Чё по трендам? -->
-      <div class="vault-card p-6">
+      <a href="/catalog" class="card-link" style="text-decoration:none;color:inherit;display:block"><div class="vault-card p-6">
         <div class="flex items-start gap-4 mb-5">
           <div class="channel-avatar" style="background:linear-gradient(135deg,#06B6D4,#0891B2)">Ч</div>
           <div class="flex-1 min-w-0">
@@ -806,12 +801,12 @@
             <div class="text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Цена</div>
             <div class="font-black text-lg gradient-text">165 000 ₽</div>
           </div>
-          <button class="px-4 py-2 rounded-full font-bold text-sm" style="background:var(--vault-blue); color:white">В корзину</button>
+          <span class="inline-flex items-center gap-1 font-bold text-sm" style="color:var(--vault-blue)">Подробнее <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-top:1px"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
-      </div>
+      </div></a>
 
       <!-- Card 5: Доктор GPT -->
-      <div class="vault-card p-6">
+      <a href="/catalog" class="card-link" style="text-decoration:none;color:inherit;display:block"><div class="vault-card p-6">
         <div class="flex items-start gap-4 mb-5">
           <div class="channel-avatar" style="background:linear-gradient(135deg,#6366F1,#4338CA)">Д</div>
           <div class="flex-1 min-w-0">
@@ -832,12 +827,12 @@
             <div class="text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Цена</div>
             <div class="font-black text-lg gradient-text">30 000 ₽</div>
           </div>
-          <button class="px-4 py-2 rounded-full font-bold text-sm" style="background:var(--vault-blue); color:white">В корзину</button>
+          <span class="inline-flex items-center gap-1 font-bold text-sm" style="color:var(--vault-blue)">Подробнее <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-top:1px"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
-      </div>
+      </div></a>
 
       <!-- Card 6: PRO MMA -->
-      <div class="vault-card p-6">
+      <a href="/catalog" class="card-link" style="text-decoration:none;color:inherit;display:block"><div class="vault-card p-6">
         <div class="flex items-start gap-4 mb-5">
           <div class="channel-avatar" style="background:linear-gradient(135deg,#EF4444,#B91C1C)">P</div>
           <div class="flex-1 min-w-0">
@@ -858,9 +853,9 @@
             <div class="text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Цена</div>
             <div class="font-black text-lg gradient-text">8 500 ₽</div>
           </div>
-          <button class="px-4 py-2 rounded-full font-bold text-sm" style="background:var(--vault-blue); color:white">В корзину</button>
+          <span class="inline-flex items-center gap-1 font-bold text-sm" style="color:var(--vault-blue)">Подробнее <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-top:1px"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
-      </div>
+      </div></a>
     </div>
 
     <div class="text-center mt-12">
