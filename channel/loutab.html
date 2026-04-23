@@ -1031,21 +1031,46 @@
   }
 })();
 
-// ========== Cart ==========
-const cart = [];
+// ========== Cart (persistent via localStorage) ==========
+const CART_KEY = 'vault-cart-v1';
+const CURRENT_CHANNEL = {"channelId": 71, "name": "ЛОУТАБ", "color": ["#8B5CF6", "#6D28D9"], "letter": "Л", "topic": "Игровые"};
 
 function formatPrice(n) {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
 }
 
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
+}
+
+function saveCart(items) {
+  try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
+}
+
+let cart = loadCart();
+
 function addToCart(format, price) {
-  cart.push({ channelId: 'ton-airdrop-ru', format, price });
+  cart = cart.filter(item => item.channelId !== CURRENT_CHANNEL.channelId);
+  cart.push({
+    channelId: CURRENT_CHANNEL.channelId,
+    name: CURRENT_CHANNEL.name,
+    format: format,
+    price: price,
+    color: CURRENT_CHANNEL.color,
+    letter: CURRENT_CHANNEL.letter,
+    topic: CURRENT_CHANNEL.topic
+  });
+  saveCart(cart);
   renderCart();
 
-  // Micro feedback — flash button
-  const btns = document.querySelectorAll('.btn-primary');
+  const btns = document.querySelectorAll('.format-card button');
   btns.forEach(b => {
-    if (b.textContent.includes('В корзину')) {
+    if (b.onclick && b.onclick.toString().includes("'" + format + "'")) {
       const orig = b.innerHTML;
       b.innerHTML = '✓ Добавлено';
       setTimeout(() => { b.innerHTML = orig; }, 1500);
@@ -1055,12 +1080,13 @@ function addToCart(format, price) {
 
 function renderCart() {
   const bar = document.getElementById('cart-bar');
+  if (!bar) return;
   if (cart.length === 0) {
     bar.classList.remove('visible');
     return;
   }
-  const sum = cart.reduce((acc, item) => acc + item.price, 0);
-  document.getElementById('cart-count').textContent = cart.length + (cart.length === 1 ? ' формат' : ' форматов');
+  const sum = cart.reduce((acc, item) => acc + (item.price || 0), 0);
+  document.getElementById('cart-count').textContent = cart.length + (cart.length === 1 ? ' канал' : ' каналов');
   document.getElementById('cart-sum').textContent = formatPrice(sum);
   bar.classList.add('visible');
 }
@@ -1068,6 +1094,8 @@ function renderCart() {
 function goToCheckout() {
   window.location.href = '/checkout';
 }
+
+renderCart();
 </script>
 
 </body>
