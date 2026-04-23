@@ -213,6 +213,29 @@
   .cart-btn-remove { background: #FEE2E2; color: #B91C1C; }
   .cart-btn-remove:hover { background: #FECACA; }
 
+  .filters-row {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    flex-wrap: nowrap;
+  }
+  .filters-row::-webkit-scrollbar { height: 4px; }
+  .filters-row::-webkit-scrollbar-thumb { background: rgba(10,115,232,0.2); border-radius: 999px; }
+  .filters-row .topic-chip { flex-shrink: 0; }
+  .filters-row-wrap {
+    position: relative;
+  }
+  .filters-row-wrap::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 12px;
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--vault-sky-soft));
+    pointer-events: none;
+    z-index: 1;
+  }
+
   @media (max-width: 1024px) {
     .filters-row {
       overflow-x: auto;
@@ -353,7 +376,9 @@
       </select>
     </div>
 
-    <div id="topic-chips" class="filters-row flex gap-2 mb-4"></div>
+    <div class="filters-row-wrap">
+      <div id="topic-chips" class="filters-row flex gap-2 mb-4"></div>
+    </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div>
@@ -428,9 +453,9 @@
       </div>
     </div>
   </div>
-  <a href="/checkout" class="btn-primary !bg-white !text-[var(--vault-blue)] hover:!bg-white/90" style="text-decoration:none; box-shadow: 0 4px 16px rgba(0,0,0,0.25); border: 2px solid white; padding: 12px 24px; font-weight: 800;">
+  <a href="/checkout" class="!bg-white hover:!bg-white" style="text-decoration:none; color: #0A73E8; font-weight: 900; padding: 14px 28px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 3px rgba(255,255,255,0.4); font-size: 15px; letter-spacing: -0.01em;">
     Оформить
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#0A73E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </div>
 
