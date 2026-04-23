@@ -749,14 +749,25 @@
 
 <script>
 /* =============================================================
-   MOCK ORDER DATA
-   In production, this comes from the cart saved in session/URL.
+   REAL CART DATA — loaded from localStorage
    ============================================================= */
-const ORDER_ITEMS = [
-  { id: 1, name: 'TON AirDrop (RU) 💎', topic: 'Крипта', format: '2/48', price: 45000, color: ['#F59E0B','#D97706'], letter: 'T' },
-  { id: 2, name: 'Мир Brawl Stars', topic: 'Игровые', format: '1/24', price: 14000, color: ['#8B5CF6','#6D28D9'], letter: 'М' },
-  { id: 3, name: 'PRO MMA | UFC Новости', topic: 'Спорт', format: '1/24', price: 8500, color: ['#EF4444','#B91C1C'], letter: 'P' }
-];
+const CART_KEY = 'vault-cart-v1';
+
+function loadCartFromStorage() {
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
+}
+
+function saveCartToStorage(items) {
+  try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
+}
+
+// Массив ORDER_ITEMS теперь загружается из localStorage (не let, чтобы можно было мутировать)
+let ORDER_ITEMS = loadCartFromStorage();
 
 const USDT_RATE = 95; // ₽ per USDT approx
 
@@ -773,7 +784,62 @@ function formatPrice(n) {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
 }
 
+function removeFromCart(channelId) {
+  ORDER_ITEMS = ORDER_ITEMS.filter(item => item.channelId !== channelId);
+  saveCartToStorage(ORDER_ITEMS);
+  renderOrderItems();
+}
+
+function showEmptyCartState() {
+  // Заменяем весь контент страницы на сообщение
+  const sections = document.querySelectorAll('section.pb-20');
+  const emptyHtml = `
+    <section class="pb-20">
+      <div class="max-w-3xl mx-auto px-4 md:px-8 text-center">
+        <div class="vault-card p-10 md:p-16">
+          <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center" style="background:var(--vault-sky)">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293a1 1 0 00.293.707L6 16m0 0h11m-11 0l-1 4h13" stroke="#0A73E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2 class="text-2xl md:text-4xl font-display mb-4" style="color:var(--vault-ink); letter-spacing:-0.03em">
+            Корзина пуста
+          </h2>
+          <p class="text-base md:text-lg font-medium mb-8 max-w-md mx-auto" style="color:var(--vault-ink-muted)">
+            Добавьте каналы из каталога, чтобы оформить размещение
+          </p>
+          <a href="/catalog" class="btn-primary">
+            Открыть каталог
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  `;
+
+  // Спрячем степпер и основной контент, вставим empty state
+  const stepper = document.querySelector('.stepper');
+  if (stepper) stepper.style.display = 'none';
+
+  const pageHeader = document.querySelector('section.pt-10');
+  if (pageHeader) pageHeader.style.display = 'none';
+
+  const stepperSection = document.querySelector('section.pb-8');
+  if (stepperSection) stepperSection.style.display = 'none';
+
+  // Заменяем основную секцию
+  if (sections.length > 0) {
+    sections[0].outerHTML = emptyHtml;
+  }
+}
+
 function renderOrderItems() {
+  // Если корзина пустая — показать empty state
+  if (!ORDER_ITEMS || ORDER_ITEMS.length === 0) {
+    showEmptyCartState();
+    return;
+  }
+
   const container = document.getElementById('order-items');
   container.innerHTML = ORDER_ITEMS.map(item => `
     <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.1)">
@@ -782,7 +848,10 @@ function renderOrderItems() {
         <div class="font-bold text-sm truncate">${item.name}</div>
         <div class="text-xs" style="color:rgba(255,255,255,0.75)">Формат ${item.format}</div>
       </div>
-      <div class="font-black text-sm flex-shrink-0" style="font-family:'Unbounded'">${formatPrice(item.price)}</div>
+      <div class="text-right flex-shrink-0">
+        <div class="font-black text-sm" style="font-family:'Unbounded'">${formatPrice(item.price)}</div>
+        <button onclick="removeFromCart(${item.channelId})" class="text-[10px] font-semibold mt-0.5 hover:underline" style="color:rgba(255,255,255,0.7)" title="Убрать из корзины">Убрать</button>
+      </div>
     </div>
   `).join('');
 
@@ -978,7 +1047,10 @@ async function submitOrder() {
 
     if (!response.ok) throw new Error('Server error');
 
-    // Успех
+    // Успех — очищаем корзину, она больше не нужна
+    saveCartToStorage([]);
+    ORDER_ITEMS = [];
+
     document.getElementById('order-id').textContent = '#' + orderId;
     document.querySelectorAll('[data-step]').forEach(el => el.classList.add('hidden-step'));
     document.querySelector('[data-step="success"]').classList.remove('hidden-step');

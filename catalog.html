@@ -1872,7 +1872,6 @@ const CHANNELS = [
 ];
 
 let filters = { search: '', topic: 'all', subsMin: null, subsMax: null, priceMin: null, priceMax: null, sort: 'subs-desc', rkn: false, verified: false };
-let cart = new Set();
 
 function formatNum(n) {
   if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M';
@@ -1936,7 +1935,7 @@ function filterChannels() {
 
 function renderChannelCard(c) {
   const topic = TOPICS[c.topic] || TOPICS.other;
-  const inCart = cart.has(c.id);
+  const inCart = isInCart(c.id);
   const gradient = `linear-gradient(135deg, ${topic.color[0]}, ${topic.color[1]})`;
   const safeName = c.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -2010,22 +2009,63 @@ function renderGrid() {
   }
 }
 
+// === CART: persistent via localStorage ===
+const CART_KEY = 'vault-cart-v1';
+
+function loadCartFromStorage() {
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveCartToStorage(items) {
+  try {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+  } catch (e) {}
+}
+
+// cart — массив объектов {channelId, name, format, price, color, letter, topic}
+let cart = loadCartFromStorage();
+
+function isInCart(channelId) {
+  return cart.some(item => item.channelId === channelId);
+}
+
 function renderCartBar() {
   const bar = document.getElementById('cart-bar');
-  const count = cart.size;
+  const count = cart.length;
   if (count === 0) { bar.classList.remove('visible'); return; }
-  const sum = Array.from(cart).reduce((acc, id) => {
-    const c = CHANNELS.find(x => x.id === id);
-    return acc + (c && c.price ? c.price : 0);
-  }, 0);
+  const sum = cart.reduce((acc, item) => acc + (item.price || 0), 0);
   document.getElementById('cart-count').textContent = count;
   document.getElementById('cart-sum').textContent = formatPrice(sum);
   bar.classList.add('visible');
 }
 
 function toggleCart(id) {
-  if (cart.has(id)) cart.delete(id);
-  else cart.add(id);
+  const channel = CHANNELS.find(c => c.id === id);
+  if (!channel) return;
+
+  const existingIdx = cart.findIndex(item => item.channelId === id);
+  if (existingIdx >= 0) {
+    cart.splice(existingIdx, 1);
+  } else {
+    const topic = TOPICS[channel.topic] || TOPICS.other;
+    cart.push({
+      channelId: channel.id,
+      name: channel.name,
+      format: channel.formatNote || '1/24',
+      price: channel.price || 0,
+      color: topic.color || ['#64748B', '#475569'],
+      letter: firstLetter(channel.name),
+      topic: topic.label || 'Другое'
+    });
+  }
+  saveCartToStorage(cart);
   renderGrid();
   renderCartBar();
 }
