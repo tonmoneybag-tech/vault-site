@@ -1861,6 +1861,17 @@ function firstLetter(name) {
   const cleaned = name.replace(/^[\s\p{Emoji}\p{S}]+/gu, '');
   return cleaned.trim().charAt(0).toUpperCase() || 'V';
 }
+function renderCpm(c) {
+  if (!c.price || !c.reach) {
+    return '<div class="font-black text-sm md:text-base" style="color:var(--vault-ink-muted)">—</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">CPM</div>';
+  }
+  const cpm = Math.round(c.price / c.reach * 1000);
+  let color;
+  if (cpm < 200) color = '#059669';
+  else if (cpm < 500) color = 'var(--vault-ink)';
+  else color = '#DC2626';
+  return '<div class="font-black text-sm md:text-base" style="color:' + color + '; font-family:\'Unbounded\'">' + cpm + '₽</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">CPM</div>';
+}
 
 function filterChannels() {
   let list = CHANNELS.slice();
@@ -1942,12 +1953,7 @@ function renderChannelCard(c) {
         <div><div class="font-black text-sm md:text-base" style="color:var(--vault-ink); font-family:'Unbounded'">${formatNum(c.subs)}</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Подп.</div></div>
         <div><div class="font-black text-sm md:text-base" style="color:var(--vault-ink); font-family:'Unbounded'">${formatNum(c.reach)}</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Охват</div></div>
         <div><div class="font-black text-sm md:text-base" style="color:var(--vault-ink); font-family:'Unbounded'">~${c.er}%</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">ER</div></div>
-        <div title="Cost Per Mille — цена за 1000 просмотров">${(function(){
-          if (!c.price || !c.reach) return '<div class="font-black text-sm md:text-base" style="color:var(--vault-ink-muted); font-family:\\'Unbounded\\'">—</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">CPM</div>';
-          const cpm = Math.round(c.price / c.reach * 1000);
-          const color = cpm < 200 ? '#059669' : (cpm < 500 ? 'var(--vault-ink)' : '#DC2626');
-          return `<div class="font-black text-sm md:text-base" style="color:${color}; font-family:'Unbounded'">${cpm}₽</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">CPM</div>`;
-        })()}</div>
+        <div title="Cost Per Mille — цена за 1000 просмотров">${renderCpm(c)}</div>
       </div>
 
       <div class="flex items-center justify-between pt-4 border-t border-[rgba(10,115,232,0.1)]">
