@@ -421,6 +421,8 @@ const TOPICS = {
   other:     { label: 'Другое',              color: ['#64748B','#475569'] }
 };
 
+const SLUGS = {"1": "dr-dropov", "2": "tyomnaya-ekonomika", "3": "media-bloknot", "4": "tekhnoinsayd-tekhnologii-i-ii", "5": "brawl-stars-premium", "6": "arsho-crypto", "7": "holly-mods-mody-maynkraft-maynkraft-mody", "8": "tvich", "9": "clash-royale", "10": "clash-royale-news", "11": "mir-clash-royale", "12": "clash-royale-live", "13": "clash-royale-13", "14": "brawl-stars", "15": "mir-brawl-stars", "16": "brawl-stars-16", "17": "brawl-stars-news", "18": "brawl-stars-18", "19": "brawl-stars-live", "20": "brawl-stars-20", "21": "brawl-stars-21", "22": "roblox", "23": "fortnite-news-fortnayt-novosti", "24": "apex-legends-news", "25": "marvel-rivals-news-marvel-novosti", "26": "valorant-news-valorant-novosti", "27": "loading-steam-news", "28": "battlefield-6-battlfild-6", "29": "apex-legends-games-project", "30": "chto-posmotret-kino-novosti", "31": "tut-i-tam-travel-blog", "32": "rashen-trevel-komyuniti", "33": "styuardessa-travel-blog", "34": "gastrotur-top-location", "35": "puteshestviya-segodnya", "36": "klient-skazal-kreativnee", "37": "dukh-sporta", "38": "tvich-live", "39": "strimery-v-kube", "40": "strim-team", "41": "dom-intera", "42": "vladislavskiy", "43": "ton-airdrop-ru", "44": "ton-airdrop-en", "45": "crypto-meteora", "46": "crypto-zaryad", "47": "ton-eliksir", "48": "the-ti", "49": "mma-tg", "50": "all-mma-ufc", "51": "popmmaflash", "52": "novosti-maynkraft", "53": "maks-notov", "54": "glaz-moskvy-novosti", "55": "moskva-1-novosti", "56": "mosvayb-novosti-moskvy", "57": "chyo-po-trendam", "58": "trndx", "59": "moskoubiznes", "60": "kretor", "61": "tachki-i-tochka", "62": "avtomaniya", "63": "the-ekonomist", "64": "dollar-po-tridtsat", "65": "winrate-counter-strike-2", "66": "winrate-dota-2", "67": "igroteka", "68": "privet-moskva", "69": "privet-moskva-69", "70": "podslushano-belarus", "71": "loutab", "72": "novosti-ks-2-counter-strike-2", "73": "m0nesy-life", "74": "dota-memy", "75": "prognozy-ks-2-dota-2-cs-2", "76": "biznesmud", "77": "doktor-gpt", "78": "only-ai", "79": "only-hack", "80": "only-github", "81": "only-python", "82": "only-it-memes", "83": "only-it", "84": "only-tech", "85": "only-apple", "86": "maynkraft-mody-maynkraft", "87": "skymods-maynkraft-mody-mody-dlya-maynkraft", "88": "pro-mma-ufc-novosti", "89": "fight-mma-ufc", "90": "pro-boks-novosti-boksa", "91": "pop-mma-smi", "92": "bortsukha-mma", "93": "grand-champ-ufc-mma-novosti", "94": "wrestling-russia-borba", "95": "pervyy-boytsovskiy", "96": "fighter-yufk", "97": "popmmaera", "98": "barcelona-team-barsa", "99": "real-madrid-koroli-ispanii"};
+
 const CHANNELS = [
   {
     "id": 1,
@@ -1874,7 +1876,7 @@ function renderChannelCard(c) {
         <div class="channel-avatar" style="background:${gradient}">${firstLetter(c.name)}</div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-1">
-            <a href="/channel" class="font-bold truncate hover:text-[var(--vault-blue)] transition" style="color:var(--vault-ink); text-decoration:none; display:block;" title="${safeName}">
+            <a href="/channel/${SLUGS[c.id]}" class="font-bold truncate hover:text-[var(--vault-blue)] transition" style="color:var(--vault-ink); text-decoration:none; display:block;" title="${safeName}">
               <h3 class="font-bold truncate">${safeName}</h3>
             </a>
             <span class="text-[10px] font-bold px-1.5 py-0.5 rounded platform-tag-tg">TG</span>
