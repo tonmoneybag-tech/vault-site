@@ -95,6 +95,14 @@
     font-size: 20px;
     flex-shrink: 0;
     font-family: 'Unbounded';
+    overflow: hidden;
+    position: relative;
+  }
+  .channel-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .topic-chip {
@@ -1873,6 +1881,9 @@ const CHANNELS = [
 
 let filters = { search: '', topic: 'all', subsMin: null, subsMax: null, priceMin: null, priceMax: null, sort: 'subs-desc', rkn: false, verified: false };
 
+// Slugs каналов, для которых скачан настоящий аватар (из TGStat). Для остальных — буква.
+const AVATARS_AVAILABLE = ['tyomnaya-ekonomika', 'media-bloknot'];
+
 function formatNum(n) {
   if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M';
   if (n >= 1000) return (n/1000).toFixed(0) + 'K';
@@ -1953,10 +1964,13 @@ function renderChannelCard(c) {
     ? `<button class="cart-btn ${inCart ? 'cart-btn-remove' : 'cart-btn-add'}" onclick="toggleCart(${c.id})">${inCart ? 'Убрать' : 'В корзину'}</button>`
     : `<a href="${c.link}" target="_blank" rel="noopener" class="cart-btn cart-btn-add" style="text-decoration:none">Подробнее</a>`;
 
+  const slug = SLUGS[c.id];
+  const avatarUrl = slug && AVATARS_AVAILABLE.includes(slug) ? `/avatars/${slug}.jpg` : null;
+
   return `
     <div class="channel-card p-6 ${inCart ? 'in-cart' : ''}" data-id="${c.id}">
       <div class="flex items-start gap-4 mb-5">
-        <div class="channel-avatar" style="background:${gradient}">${firstLetter(c.name)}</div>
+        <div class="channel-avatar" style="background:${gradient}">${avatarUrl ? `<img src="${avatarUrl}" alt="" loading="lazy" onerror="this.style.display='none'">` : firstLetter(c.name)}</div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-1">
             <a href="/channel/${SLUGS[c.id]}" class="font-bold truncate hover:text-[var(--vault-blue)] transition" style="color:var(--vault-ink); text-decoration:none; display:block;" title="${safeName}">
