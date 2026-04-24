@@ -416,336 +416,156 @@
 </header>
 
 <!-- PAGE HEADER -->
-<section class="pt-10 md:pt-14 pb-6">
-  <div class="max-w-5xl mx-auto px-4 md:px-8 text-center">
-    <span class="badge-soft mb-4">Оформление заказа</span>
+<section class="pt-10 md:pt-14 pb-4">
+  <div class="max-w-2xl mx-auto px-4 md:px-8 text-center">
+    <span class="badge-soft mb-4">Заявка на размещение</span>
     <h1 class="text-3xl md:text-5xl font-black mt-4 mb-3" style="font-family:'Unbounded'; letter-spacing:-0.04em; line-height:1">
-      Осталось <span class="gradient-text">несколько шагов</span>
+      Оставьте <span class="gradient-text">заявку</span>
     </h1>
     <p class="text-base md:text-lg font-medium" style="color:var(--vault-ink-muted)">
-      Заполните детали кампании, и мы запустим размещения в согласованное время
+      Укажите Telegram — менеджер свяжется в течение часа для согласования деталей
     </p>
-  </div>
-</section>
-
-<!-- STEPPER -->
-<section class="pb-8">
-  <div class="max-w-5xl mx-auto px-4 md:px-8">
-    <div class="stepper">
-      <div class="step active" data-step-indicator="1">
-        <span class="step-num">1</span>
-        <span>Креатив</span>
-      </div>
-      <div class="step-divider"></div>
-      <div class="step inactive" data-step-indicator="2">
-        <span class="step-num">2</span>
-        <span>Контакты</span>
-      </div>
-      <div class="step-divider"></div>
-      <div class="step inactive" data-step-indicator="3">
-        <span class="step-num">3</span>
-        <span>Оплата</span>
-      </div>
-    </div>
   </div>
 </section>
 
 <!-- MAIN -->
 <section class="pb-20">
-  <div class="max-w-6xl mx-auto px-4 md:px-8">
-    <div class="grid lg:grid-cols-3 gap-6">
+  <div class="max-w-2xl mx-auto px-4 md:px-8">
 
-      <!-- ====== LEFT: FORM ====== -->
-      <div class="lg:col-span-2">
-
-        <!-- ===== STEP 1: CREATIVE ===== -->
-        <div data-step="1" class="vault-card p-6 md:p-8">
-          <h2 class="text-xl md:text-2xl font-heading mb-2" style="color:var(--vault-ink)">Рекламный креатив</h2>
-          <p class="text-sm font-medium mb-6" style="color:var(--vault-ink-muted)">
-            Тот же креатив будет использован для всех выбранных каналов. Автор канала согласует с вами детали перед публикацией.
-          </p>
-
-          <div class="space-y-5">
-            <div>
-              <label class="form-label">Текст рекламного поста *</label>
-              <textarea id="field-text" class="vault-input" placeholder="Например: Друзья! Запускаем новый продукт — инновационный сервис для..."></textarea>
-              <div class="flex justify-between">
-                <div class="form-hint">Можно использовать Telegram-форматирование: <b>**жирный**</b>, <i>__курсив__</i>, [ссылка](url)</div>
-                <div class="form-hint" id="text-counter">0 / 1024</div>
-              </div>
-              <div class="form-error" id="error-text">Добавьте текст поста</div>
-            </div>
-
-            <div>
-              <label class="form-label">Ссылка для перехода *</label>
-              <input type="url" id="field-url" class="vault-input" placeholder="https://example.com">
-              <div class="form-hint">Куда будет вести кликабельная кнопка или ссылка в посте</div>
-              <div class="form-error" id="error-url">Укажите корректную ссылку (https://...)</div>
-            </div>
-
-            <div>
-              <label class="form-label">Медиа (фото или видео)</label>
-              <div class="border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer hover:border-[var(--vault-blue)] transition" style="border-color:rgba(10,115,232,0.2); background:var(--vault-sky-soft)">
-                <svg class="mx-auto mb-3" width="36" height="36" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="#0A73E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <div class="font-bold mb-1" style="color:var(--vault-ink)">Перетащите или выберите файл</div>
-                <div class="text-xs font-medium" style="color:var(--vault-ink-muted)">JPG, PNG, MP4 · до 50 МБ</div>
-              </div>
-            </div>
-
-            <div>
-              <label class="form-label">Желаемая дата публикации</label>
-              <input type="date" id="field-date" class="vault-input" min="">
-              <div class="form-hint">Точное время согласуете с автором. Минимум через 24 часа от момента оплаты.</div>
-            </div>
-
-            <div>
-              <label class="form-label">Время в течение дня</label>
-              <div class="grid grid-cols-3 gap-2">
-                <button type="button" class="time-slot" data-time="morning">Утро (9-12)</button>
-                <button type="button" class="time-slot selected" data-time="afternoon">День (12-18)</button>
-                <button type="button" class="time-slot" data-time="evening">Вечер (18-22)</button>
-              </div>
-            </div>
-
-            <div>
-              <label class="form-label">Комментарий для авторов (опционально)</label>
-              <textarea id="field-comment" class="vault-input" style="min-height:80px" placeholder="Особые пожелания, ограничения, предпочтения по оформлению..."></textarea>
-            </div>
-          </div>
-
-          <div class="mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
-            <a href="/catalog" class="btn-ghost">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              В каталог
-            </a>
-            <button onclick="goToStep(2)" class="btn-primary w-full sm:w-auto">
-              Дальше — контакты
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
+    <!-- ORDER SUMMARY CARD -->
+    <div id="order-card" class="rounded-3xl p-6 md:p-8 mb-6" style="background:linear-gradient(160deg, #0A73E8 0%, #085CBA 60%, #064794 100%); color:white">
+      <div class="flex items-baseline justify-between mb-4">
+        <div class="text-sm font-bold opacity-80 uppercase tracking-wider">Ваш заказ</div>
+        <div class="text-sm font-bold opacity-80">
+          <span id="items-count">0</span> <span id="items-word">размещений</span>
         </div>
-
-        <!-- ===== STEP 2: CONTACT ===== -->
-        <div data-step="2" class="vault-card p-6 md:p-8 hidden-step">
-          <h2 class="text-xl md:text-2xl font-heading mb-2" style="color:var(--vault-ink)">Контактные данные</h2>
-          <p class="text-sm font-medium mb-6" style="color:var(--vault-ink-muted)">
-            Нам нужен способ связаться с вами — для согласования креатива, отправки уведомлений и подтверждений размещения.
-          </p>
-
-          <div class="space-y-5">
-            <div>
-              <label class="form-label">Как к вам обращаться *</label>
-              <input type="text" id="field-name" class="vault-input" placeholder="Имя или название компании">
-              <div class="form-error" id="error-name">Введите имя</div>
-            </div>
-
-            <div>
-              <label class="form-label">Telegram для связи *</label>
-              <input type="text" id="field-telegram" class="vault-input" placeholder="@username">
-              <div class="form-hint">Основной канал связи. Сюда придут уведомления и ссылки на опубликованные посты.</div>
-              <div class="form-error" id="error-telegram">Укажите Telegram-ник (начинается с @)</div>
-            </div>
-
-            <div>
-              <label class="form-label">Email</label>
-              <input type="email" id="field-email" class="vault-input" placeholder="you@example.com">
-              <div class="form-hint">Опционально. Для резервной связи и отправки чеков.</div>
-            </div>
-
-            <div class="p-4 rounded-2xl" style="background:var(--vault-sky-soft); border:1px solid rgba(10,115,232,0.1)">
-              <div class="flex items-start gap-3">
-                <svg class="flex-shrink-0 mt-0.5" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="9" stroke="#0A73E8" stroke-width="2"/>
-                  <path d="M12 8v4M12 16h.01" stroke="#0A73E8" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <div>
-                  <div class="font-bold text-sm mb-1" style="color:var(--vault-ink)">ОРД-маркировка</div>
-                  <p class="text-xs font-medium" style="color:var(--vault-ink-muted)">
-                    На данный момент Vault не выполняет маркировку ERID. Рекламодатель самостоятельно регистрирует креатив в ОРД перед публикацией. Эту функцию мы запустим в ближайшее время.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
-            <button onclick="goToStep(1)" class="btn-ghost">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Назад
-            </button>
-            <button onclick="goToStep(3)" class="btn-primary w-full sm:w-auto">
-              Дальше — оплата
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- ===== STEP 3: PAYMENT ===== -->
-        <div data-step="3" class="vault-card p-6 md:p-8 hidden-step">
-          <h2 class="text-xl md:text-2xl font-heading mb-2" style="color:var(--vault-ink)">Способ оплаты</h2>
-          <p class="text-sm font-medium mb-6" style="color:var(--vault-ink-muted)">
-            Оплата резервируется на балансе Vault. Деньги переводятся автору только после подтверждённой публикации.
-          </p>
-
-          <div class="space-y-3">
-            <div class="pay-method selected" data-pay="card">
-              <div class="pay-method-radio"></div>
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <div class="font-bold" style="color:var(--vault-ink)">Банковская карта</div>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:var(--vault-sky); color:var(--vault-blue)">МИР · VISA · MC</span>
-                </div>
-                <div class="text-xs font-medium" style="color:var(--vault-ink-muted)">Оплата в рублях, зачисление моментально</div>
-              </div>
-              <div class="flex items-center gap-1.5 text-xl">💳</div>
-            </div>
-
-            <div class="pay-method" data-pay="sbp">
-              <div class="pay-method-radio"></div>
-              <div class="flex-1">
-                <div class="font-bold mb-1" style="color:var(--vault-ink)">Система быстрых платежей (СБП)</div>
-                <div class="text-xs font-medium" style="color:var(--vault-ink-muted)">QR-код от вашего банка · 0% комиссии</div>
-              </div>
-              <div class="flex items-center gap-1.5 text-xl">⚡️</div>
-            </div>
-
-            <div class="pay-method" data-pay="usdt">
-              <div class="pay-method-radio"></div>
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <div class="font-bold" style="color:var(--vault-ink)">Криптовалюта USDT</div>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:rgba(16,185,129,0.1); color:#059669">TRC20 · TON</span>
-                </div>
-                <div class="text-xs font-medium" style="color:var(--vault-ink-muted)">Без комиссий банков, быстрый перевод</div>
-              </div>
-              <div class="flex items-center gap-1.5 text-xl">💎</div>
-            </div>
-
-            <div class="pay-method" data-pay="invoice">
-              <div class="pay-method-radio"></div>
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <div class="font-bold" style="color:var(--vault-ink)">Счёт для юрлица</div>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:rgba(245,158,11,0.1); color:#D97706">СКОРО</span>
-                </div>
-                <div class="text-xs font-medium" style="color:var(--vault-ink-muted)">Оплата по реквизитам, закрывающие документы · появится с запуском B2B</div>
-              </div>
-              <div class="flex items-center gap-1.5 text-xl">📄</div>
-            </div>
-          </div>
-
-          <div class="mt-6 p-4 rounded-2xl flex items-start gap-3" style="background:var(--vault-sky-soft); border:1px solid rgba(10,115,232,0.1)">
-            <svg class="flex-shrink-0 mt-0.5" width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#0A73E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div>
-              <div class="font-bold text-sm mb-1" style="color:var(--vault-ink)">Гарантия возврата</div>
-              <p class="text-xs font-medium" style="color:var(--vault-ink-muted)">
-                Если автор не опубликует пост в согласованное время или нарушит условия — средства автоматически вернутся на ваш баланс Vault без разбирательств.
-              </p>
-            </div>
-          </div>
-
-          <div class="mt-6">
-            <label class="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" id="field-agree" class="mt-1 w-4 h-4 rounded" style="accent-color: var(--vault-blue)">
-              <span class="text-xs font-medium" style="color:var(--vault-ink-muted)">
-                Я принимаю <a href="/terms" class="font-bold" style="color:var(--vault-blue)">Оферту</a> и <a href="/privacy" class="font-bold" style="color:var(--vault-blue)">Политику обработки персональных данных</a>. Понимаю, что оплата резервируется на балансе Vault до подтверждения публикации автором.
-              </span>
-            </label>
-            <div class="form-error" id="error-agree">Необходимо принять условия оферты</div>
-          </div>
-
-          <div class="mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
-            <button onclick="goToStep(2)" class="btn-ghost">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Назад
-            </button>
-            <button onclick="submitOrder()" class="btn-primary w-full sm:w-auto" id="submit-btn">
-              <span>Оплатить </span><span id="submit-amount">0 ₽</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- ===== SUCCESS ===== -->
-        <div data-step="success" class="vault-card p-8 md:p-12 text-center hidden-step">
-          <div class="success-check">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h2 class="text-2xl md:text-4xl font-display mb-4" style="color:var(--vault-ink); letter-spacing:-0.03em">
-            Заказ оформлен!
-          </h2>
-          <p class="text-base md:text-lg font-medium mb-6" style="color:var(--vault-ink-muted)">
-            Номер заказа: <span class="font-black gradient-text" style="font-family:'Unbounded'" id="order-id">#VLT-0000</span>
-          </p>
-          <p class="font-medium mb-8 max-w-md mx-auto" style="color:var(--vault-ink-muted)">
-            Мы отправили детали в ваш Telegram. Менеджер свяжется с вами в ближайшее время для согласования креатива с авторами.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="https://t.me/maxvane" target="_blank" rel="noopener" class="btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-              Написать менеджеру
-            </a>
-            <a href="/catalog" class="btn-ghost">
-              Вернуться в каталог
-            </a>
-          </div>
-        </div>
-
       </div>
+      <div id="order-items" class="space-y-2 mb-6"></div>
+      <div class="pt-5 border-t border-white/20 flex items-baseline justify-between">
+        <span class="text-base md:text-lg font-bold">Итого</span>
+        <span class="text-3xl md:text-4xl font-black" style="font-family:'Unbounded'; letter-spacing:-0.02em" id="sum-total">0 ₽</span>
+      </div>
+    </div>
 
-      <!-- ====== RIGHT: SUMMARY ====== -->
-      <div class="lg:col-span-1">
-        <div class="summary-card">
-          <div class="mb-5">
-            <div class="text-xs font-bold uppercase tracking-wider mb-1" style="color:rgba(255,255,255,0.7)">Ваш заказ</div>
-            <div class="text-2xl font-black" style="font-family:'Unbounded'; letter-spacing:-0.02em">
-              <span id="items-count">3</span> размещения
-            </div>
-          </div>
-
-          <!-- Items list -->
-          <div class="space-y-3 mb-6" id="order-items">
-            <!-- JS renders items -->
-          </div>
-
-          <!-- Totals -->
-          <div class="pt-4 border-t border-white/20 space-y-2 text-sm">
-            <div class="flex justify-between">
-              <span style="color:rgba(255,255,255,0.8)">Стоимость размещений</span>
-              <span class="font-bold" id="sum-subtotal">0 ₽</span>
-            </div>
-            <div class="flex justify-between">
-              <span style="color:rgba(255,255,255,0.8)">Комиссия сервиса</span>
-              <span class="font-bold" style="color:#86EFAC">0 ₽</span>
-            </div>
-          </div>
-
-          <div class="mt-4 pt-4 border-t border-white/20">
-            <div class="flex justify-between items-baseline mb-1">
-              <span class="font-bold">Итого к оплате</span>
-              <span class="text-3xl font-black" style="font-family:'Unbounded'; letter-spacing:-0.02em" id="sum-total">0 ₽</span>
-            </div>
-            <div class="text-xs" style="color:rgba(255,255,255,0.7)">
-              или ~<span id="sum-usdt">0</span> USDT по курсу ЦБ
-            </div>
-          </div>
-
-          <div class="mt-5 p-3 rounded-xl flex items-center gap-2 text-xs font-semibold" style="background:rgba(255,255,255,0.1)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="flex-shrink-0">
-              <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Безопасная оплата · Гарантия возврата
-          </div>
+    <!-- FORM -->
+    <form id="apply-form" class="vault-card p-6 md:p-8 space-y-5" onsubmit="return false">
+      <div>
+        <label class="block text-sm font-bold mb-2" style="color:var(--vault-ink)">
+          Ваш Telegram <span style="color:#DC2626">*</span>
+        </label>
+        <input
+          type="text"
+          id="field-telegram"
+          name="telegram"
+          placeholder="@username"
+          required
+          autocomplete="off"
+          style="width:100%; padding:14px 16px; border:1.5px solid #E5EBF2; border-radius:14px; font-size:15px; font-family:'Onest', sans-serif; font-weight:500; color:var(--vault-ink); background:white; transition:border-color 0.2s"
+          onfocus="this.style.borderColor='var(--vault-blue)'"
+          onblur="this.style.borderColor='#E5EBF2'"
+        />
+        <div class="text-xs font-medium mt-2" style="color:var(--vault-ink-muted)">
+          Для связи с вами по размещению. Начните с @ или просто имя.
         </div>
       </div>
 
+      <div>
+        <label class="block text-sm font-bold mb-2" style="color:var(--vault-ink)">
+          Короткое описание <span style="color:var(--vault-ink-muted); font-weight:500; font-size:13px">(необязательно)</span>
+        </label>
+        <textarea
+          id="field-description"
+          name="description"
+          rows="4"
+          placeholder="Что рекламируете, бюджет, желаемые сроки — если есть пожелания"
+          style="width:100%; padding:14px 16px; border:1.5px solid #E5EBF2; border-radius:14px; font-size:15px; font-family:'Onest', sans-serif; font-weight:500; color:var(--vault-ink); background:white; resize:vertical; min-height:100px; transition:border-color 0.2s"
+          onfocus="this.style.borderColor='var(--vault-blue)'"
+          onblur="this.style.borderColor='#E5EBF2'"
+        ></textarea>
+      </div>
+
+      <button type="submit" id="submit-btn" onclick="submitOrder()" class="btn-primary w-full justify-center !py-4 !text-base">
+        <span>Отправить заявку</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="text-xs text-center font-medium leading-relaxed" style="color:var(--vault-ink-muted)">
+        <div class="mb-1">⚡ После отправки <strong style="color:var(--vault-ink)">@maxvane</strong> напишет вам в Telegram в течение часа</div>
+        <div>Оплата — на этапе согласования (карта, СБП, USDT или счёт для ИП/ООО)</div>
+      </div>
+
+      <div class="text-[11px] text-center font-medium pt-2" style="color:var(--vault-ink-muted)">
+        Отправляя заявку, вы соглашаетесь с
+        <a href="/terms" class="hover:underline" style="color:var(--vault-blue)">офертой</a> и
+        <a href="/privacy" class="hover:underline" style="color:var(--vault-blue)">политикой обработки персональных данных</a>
+      </div>
+    </form>
+
+    <!-- BACK LINK -->
+    <div class="text-center mt-6">
+      <a href="/catalog" class="text-sm font-semibold hover:underline inline-flex items-center gap-1" style="color:var(--vault-ink-muted)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Вернуться в каталог
+      </a>
     </div>
   </div>
 </section>
+
+<!-- SUCCESS STATE (hidden by default) -->
+<section id="success-section" class="hidden-step pb-20">
+  <div class="max-w-2xl mx-auto px-4 md:px-8">
+    <div class="vault-card p-10 md:p-14 text-center">
+      <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center" style="background:linear-gradient(135deg, #22C55E, #059669)">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2 class="text-2xl md:text-4xl font-black mb-4" style="font-family:'Unbounded'; letter-spacing:-0.03em; color:var(--vault-ink)">
+        Заявка отправлена!
+      </h2>
+      <p class="text-base md:text-lg font-medium mb-2 max-w-md mx-auto" style="color:var(--vault-ink-muted)">
+        Номер заявки: <strong id="order-id" style="color:var(--vault-ink)">#VLT-0000</strong>
+      </p>
+      <p class="text-base md:text-lg font-medium mb-8 max-w-md mx-auto" style="color:var(--vault-ink-muted)">
+        В течение часа <strong style="color:var(--vault-ink)">@maxvane</strong> напишет вам в Telegram — согласует детали и пришлёт счёт на оплату.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="https://t.me/maxvane" target="_blank" rel="noopener" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.505.505 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          Написать @maxvane
+        </a>
+        <a href="/catalog" class="btn-ghost">
+          Вернуться в каталог
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EMPTY CART STATE (hidden by default) -->
+<section id="empty-cart-section" class="hidden-step pb-20">
+  <div class="max-w-2xl mx-auto px-4 md:px-8">
+    <div class="vault-card p-10 md:p-14 text-center">
+      <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center" style="background:var(--vault-sky)">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+          <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293a1 1 0 00.293.707L6 16m0 0h11m-11 0l-1 4h13" stroke="#0A73E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl md:text-4xl font-black mb-4" style="font-family:'Unbounded'; letter-spacing:-0.03em; color:var(--vault-ink)">
+        Корзина пуста
+      </h2>
+      <p class="text-base md:text-lg font-medium mb-8 max-w-md mx-auto" style="color:var(--vault-ink-muted)">
+        Добавьте каналы из каталога, чтобы оставить заявку на размещение
+      </p>
+      <a href="/catalog" class="btn-primary">
+        Открыть каталог
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hidden-step { display: none !important; }
+</style>
 
 <script>
 /* =============================================================
@@ -766,22 +586,19 @@ function saveCartToStorage(items) {
   try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
 }
 
-// Массив ORDER_ITEMS теперь загружается из localStorage (не let, чтобы можно было мутировать)
 let ORDER_ITEMS = loadCartFromStorage();
 
-const USDT_RATE = 95; // ₽ per USDT approx
-
-/* =============================================================
-   STATE
-   ============================================================= */
-let currentStep = 1;
-let selectedPayment = 'card';
-
-/* =============================================================
-   UTILITIES
-   ============================================================= */
 function formatPrice(n) {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+}
+
+function pluralize(n, forms) {
+  // forms: ['размещение', 'размещения', 'размещений']
+  const m = n % 10, h = n % 100;
+  if (h >= 11 && h <= 19) return forms[2];
+  if (m === 1) return forms[0];
+  if (m >= 2 && m <= 4) return forms[1];
+  return forms[2];
 }
 
 function removeFromCart(channelId) {
@@ -790,253 +607,79 @@ function removeFromCart(channelId) {
   renderOrderItems();
 }
 
-function showEmptyCartState() {
-  // Заменяем весь контент страницы на сообщение
-  const sections = document.querySelectorAll('section.pb-20');
-  const emptyHtml = `
-    <section class="pb-20">
-      <div class="max-w-3xl mx-auto px-4 md:px-8 text-center">
-        <div class="vault-card p-10 md:p-16">
-          <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center" style="background:var(--vault-sky)">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293a1 1 0 00.293.707L6 16m0 0h11m-11 0l-1 4h13" stroke="#0A73E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h2 class="text-2xl md:text-4xl font-display mb-4" style="color:var(--vault-ink); letter-spacing:-0.03em">
-            Корзина пуста
-          </h2>
-          <p class="text-base md:text-lg font-medium mb-8 max-w-md mx-auto" style="color:var(--vault-ink-muted)">
-            Добавьте каналы из каталога, чтобы оформить размещение
-          </p>
-          <a href="/catalog" class="btn-primary">
-            Открыть каталог
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // Спрячем степпер и основной контент, вставим empty state
-  const stepper = document.querySelector('.stepper');
-  if (stepper) stepper.style.display = 'none';
-
-  const pageHeader = document.querySelector('section.pt-10');
-  if (pageHeader) pageHeader.style.display = 'none';
-
-  const stepperSection = document.querySelector('section.pb-8');
-  if (stepperSection) stepperSection.style.display = 'none';
-
-  // Заменяем основную секцию
-  if (sections.length > 0) {
-    sections[0].outerHTML = emptyHtml;
-  }
-}
-
 function renderOrderItems() {
-  // Если корзина пустая — показать empty state
   if (!ORDER_ITEMS || ORDER_ITEMS.length === 0) {
-    showEmptyCartState();
+    // Показываем "Корзина пуста", прячем остальное
+    document.getElementById('order-card').style.display = 'none';
+    document.getElementById('apply-form').style.display = 'none';
+    document.querySelector('.pt-10').style.display = 'none';
+    document.getElementById('empty-cart-section').classList.remove('hidden-step');
     return;
   }
 
   const container = document.getElementById('order-items');
-  container.innerHTML = ORDER_ITEMS.map(item => `
-    <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.1)">
-      <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-base flex-shrink-0" style="font-family:'Unbounded'; background:linear-gradient(135deg,${item.color[0]},${item.color[1]}); color:white">${item.letter}</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm truncate">${item.name}</div>
-        <div class="text-xs" style="color:rgba(255,255,255,0.75)">Формат ${item.format}</div>
+  container.innerHTML = ORDER_ITEMS.map(item => {
+    const bg = `linear-gradient(135deg, ${item.color[0]}, ${item.color[1]})`;
+    return `
+      <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.1)">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-base flex-shrink-0" style="font-family:'Unbounded'; background:${bg}; color:white">${item.letter}</div>
+        <div class="flex-1 min-w-0">
+          <div class="font-bold text-sm truncate">${item.name}</div>
+          <div class="text-xs opacity-75">Формат ${item.format}</div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="font-black text-sm" style="font-family:'Unbounded'">${formatPrice(item.price)}</div>
+          <button onclick="removeFromCart(${item.channelId})" class="text-[11px] font-semibold mt-0.5 hover:underline opacity-70 hover:opacity-100" title="Убрать из корзины">Убрать</button>
+        </div>
       </div>
-      <div class="text-right flex-shrink-0">
-        <div class="font-black text-sm" style="font-family:'Unbounded'">${formatPrice(item.price)}</div>
-        <button onclick="removeFromCart(${item.channelId})" class="text-[10px] font-semibold mt-0.5 hover:underline" style="color:rgba(255,255,255,0.7)" title="Убрать из корзины">Убрать</button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   document.getElementById('items-count').textContent = ORDER_ITEMS.length;
+  document.getElementById('items-word').textContent = pluralize(ORDER_ITEMS.length, ['размещение', 'размещения', 'размещений']);
 
-  const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price, 0);
-  document.getElementById('sum-subtotal').textContent = formatPrice(subtotal);
+  const subtotal = ORDER_ITEMS.reduce((s, i) => s + (i.price || 0), 0);
   document.getElementById('sum-total').textContent = formatPrice(subtotal);
-  document.getElementById('sum-usdt').textContent = Math.round(subtotal / USDT_RATE).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  document.getElementById('submit-amount').textContent = formatPrice(subtotal);
 }
 
-/* =============================================================
-   STEP NAVIGATION
-   ============================================================= */
-function goToStep(n) {
-  // Validate before going forward
-  if (n > currentStep) {
-    if (currentStep === 1 && !validateStep1()) return;
-    if (currentStep === 2 && !validateStep2()) return;
-  }
-
-  // Hide all steps, show target
-  document.querySelectorAll('[data-step]').forEach(el => el.classList.add('hidden-step'));
-  document.querySelector(`[data-step="${n}"]`).classList.remove('hidden-step');
-
-  // Update stepper indicators
-  document.querySelectorAll('[data-step-indicator]').forEach(el => {
-    const i = parseInt(el.dataset.stepIndicator);
-    el.classList.remove('active', 'completed', 'inactive');
-    if (i < n) el.classList.add('completed');
-    else if (i === n) el.classList.add('active');
-    else el.classList.add('inactive');
-  });
-
-  // Update completed step-num: checkmark
-  document.querySelectorAll('[data-step-indicator].completed .step-num').forEach(el => {
-    el.innerHTML = '✓';
-  });
-  document.querySelectorAll('[data-step-indicator]:not(.completed) .step-num').forEach((el, idx) => {
-    const i = parseInt(el.parentElement.dataset.stepIndicator);
-    el.innerHTML = i;
-  });
-
-  currentStep = n;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-/* =============================================================
-   VALIDATION
-   ============================================================= */
-function showError(fieldId, show) {
-  const errEl = document.getElementById('error-' + fieldId);
-  const inputEl = document.getElementById('field-' + fieldId);
-  if (errEl) errEl.classList.toggle('visible', show);
-  if (inputEl) inputEl.classList.toggle('error', show);
-}
-
-function validateStep1() {
-  let valid = true;
-
-  const text = document.getElementById('field-text').value.trim();
-  if (text.length < 10) {
-    showError('text', true);
-    valid = false;
-  } else {
-    showError('text', false);
-  }
-
-  const url = document.getElementById('field-url').value.trim();
-  const urlValid = /^https?:\/\/.+\..+/i.test(url);
-  if (!urlValid) {
-    showError('url', true);
-    valid = false;
-  } else {
-    showError('url', false);
-  }
-
-  return valid;
-}
-
-function validateStep2() {
-  let valid = true;
-
-  const name = document.getElementById('field-name').value.trim();
-  if (name.length < 2) {
-    showError('name', true);
-    valid = false;
-  } else {
-    showError('name', false);
-  }
-
-  const tg = document.getElementById('field-telegram').value.trim();
-  const tgValid = /^@?[\w\d_]{3,}$/.test(tg);
-  if (!tgValid) {
-    showError('telegram', true);
-    valid = false;
-  } else {
-    showError('telegram', false);
-  }
-
-  return valid;
-}
-
-/* =============================================================
-   PAYMENT METHOD
-   ============================================================= */
-document.querySelectorAll('.pay-method').forEach(el => {
-  el.addEventListener('click', () => {
-    if (el.dataset.pay === 'invoice') return; // disabled
-    document.querySelectorAll('.pay-method').forEach(e => e.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedPayment = el.dataset.pay;
-  });
-});
-
-/* =============================================================
-   TIME SLOTS
-   ============================================================= */
-document.querySelectorAll('.time-slot').forEach(el => {
-  el.addEventListener('click', () => {
-    document.querySelectorAll('.time-slot').forEach(e => e.classList.remove('selected'));
-    el.classList.add('selected');
-  });
-});
-
-/* =============================================================
-   TEXT COUNTER
-   ============================================================= */
-const textField = document.getElementById('field-text');
-textField.addEventListener('input', () => {
-  const len = textField.value.length;
-  document.getElementById('text-counter').textContent = `${len} / 1024`;
-});
-
-/* =============================================================
-   DATE: min = tomorrow
-   ============================================================= */
-(function initDate() {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split('T')[0];
-  document.getElementById('field-date').min = minDate;
-  document.getElementById('field-date').value = minDate;
-})();
-
-/* =============================================================
-   SUBMIT
-   ============================================================= */
 async function submitOrder() {
-  const agree = document.getElementById('field-agree').checked;
-  if (!agree) {
-    document.getElementById('error-agree').classList.add('visible');
+  const tgInput = document.getElementById('field-telegram');
+  let telegram = tgInput.value.trim();
+
+  if (!telegram) {
+    tgInput.focus();
+    tgInput.style.borderColor = '#DC2626';
+    setTimeout(() => { tgInput.style.borderColor = '#E5EBF2'; }, 2000);
     return;
   }
-  document.getElementById('error-agree').classList.remove('visible');
 
+  // Нормализуем @
+  if (!telegram.startsWith('@') && !telegram.startsWith('http')) {
+    telegram = '@' + telegram;
+  }
+
+  const description = document.getElementById('field-description').value.trim();
   const submitBtn = document.getElementById('submit-btn');
-  const originalText = submitBtn.innerHTML;
+  const originalHtml = submitBtn.innerHTML;
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span>Отправляем заявку...</span>';
 
-  // Generate order ID
   const orderId = 'VLT-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+  const subtotal = ORDER_ITEMS.reduce((s, i) => s + (i.price || 0), 0);
 
-  // Собираем данные для отправки в Telegram
-  const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price, 0);
   const payload = {
     type: 'advertiser_order',
     orderId: orderId,
-    name: (document.getElementById('field-name').value || '').trim(),
-    telegram: (document.getElementById('field-telegram').value || '').trim(),
-    email: (document.getElementById('field-email').value || '').trim(),
-    adText: (document.getElementById('field-text').value || '').trim(),
-    adUrl: (document.getElementById('field-url').value || '').trim(),
-    date: (document.getElementById('field-date').value || '').trim(),
-    payment: selectedPayment,
+    name: telegram,  // используем Telegram как имя для совместимости с ботом
+    telegram: telegram,
+    email: '',
+    adText: description,
+    adUrl: '',
+    date: '',
+    payment: 'Обсудить с менеджером',
     items: ORDER_ITEMS.map(i => ({ name: i.name, format: i.format, price: i.price })),
     total: subtotal
   };
-
-  // Нормализуем TG
-  if (payload.telegram && !payload.telegram.startsWith('@') && !payload.telegram.startsWith('http')) {
-    payload.telegram = '@' + payload.telegram;
-  }
 
   try {
     const response = await fetch('/api/apply', {
@@ -1044,21 +687,22 @@ async function submitOrder() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
     if (!response.ok) throw new Error('Server error');
 
-    // Успех — очищаем корзину, она больше не нужна
+    // Успех — очищаем корзину
     saveCartToStorage([]);
     ORDER_ITEMS = [];
 
     document.getElementById('order-id').textContent = '#' + orderId;
-    document.querySelectorAll('[data-step]').forEach(el => el.classList.add('hidden-step'));
-    document.querySelector('[data-step="success"]').classList.remove('hidden-step');
-    document.querySelector('.stepper').style.display = 'none';
+    document.getElementById('order-card').style.display = 'none';
+    document.getElementById('apply-form').style.display = 'none';
+    document.querySelector('.pt-10').style.display = 'none';
+    document.querySelector('.text-center.mt-6').style.display = 'none';
+    document.getElementById('success-section').classList.remove('hidden-step');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
+    submitBtn.innerHTML = originalHtml;
     alert('Не удалось отправить заявку. Попробуйте ещё раз или напишите @maxvane в Telegram.');
   }
 }
