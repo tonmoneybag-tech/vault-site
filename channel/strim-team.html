@@ -298,6 +298,12 @@
   }
   .breadcrumbs a { color: var(--vault-ink-muted); transition: color 0.15s; }
   .breadcrumbs a:hover { color: var(--vault-blue); }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  }
 </style>
 
 <!-- Open Graph / Twitter -->
@@ -391,6 +397,7 @@
           <div class="flex flex-wrap items-center gap-2 mb-3">
             <span class="text-[10px] font-bold px-2 py-1 rounded platform-tag-tg">TELEGRAM</span>
             
+            <span id="live-stats-badge" class="hidden text-[11px] font-bold px-2 py-1 rounded-full inline-flex items-center gap-1" style="background:rgba(16,185,129,0.12); color:#059669; border: 1px solid rgba(16,185,129,0.2)" title="Канал подключён к live-статистике Vault"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#059669; box-shadow:0 0 0 0 rgba(16,185,129,0.7); animation: pulse 2s infinite;"></span>LIVE STATS</span>
             <span class="badge-soft">Стримеры и блогеры</span>
           </div>
 
@@ -450,15 +457,15 @@
       </div>
     </div>
 
-    <!-- Growth chart -->
-    <div class="vault-card p-6 md:p-8 mt-4">
+    <!-- Growth chart - показывается только если есть данные -->
+    <div class="vault-card p-6 md:p-8 mt-4 hidden" id="growth-block">
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
           <h3 class="text-lg md:text-xl font-heading" style="color:var(--vault-ink)">Динамика подписчиков</h3>
-          <p class="text-sm font-medium" style="color:var(--vault-ink-muted)">Рост за последние 30 дней</p>
+          <p class="text-sm font-medium" style="color:var(--vault-ink-muted)">Реальные данные с бота</p>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(16,185,129,0.1); color:#059669">+2K подписчиков</span>
+          <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(16,185,129,0.1); color:#059669" id="growth-badge">+0 подписчиков</span>
         </div>
       </div>
       <canvas id="growth-chart"></canvas>
@@ -601,20 +608,11 @@
           </p>
         </div>
       </div>
-
-      <div class="vault-card p-6 md:p-8">
-        <h3 class="text-xl font-heading mb-5" style="color:var(--vault-ink)">Аудитория</h3>
-        <div class="space-y-4">
-          <div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-semibold" style="color:var(--vault-ink)">Россия</span>
-              <span class="font-bold" style="color:var(--vault-blue)">62%</span>
-            </div>
-            <div class="w-full h-2 rounded-full" style="background:rgba(10,115,232,0.1)">
-              <div class="h-full rounded-full" style="width:62%; background:linear-gradient(90deg,#3D93EE,#0A73E8)"></div>
-            </div>
-          </div>
-          <div>
+      </div>
+    </div>
+  </div>
+</section>
+<div>
             <div class="flex justify-between text-sm mb-1">
               <span class="font-semibold" style="color:var(--vault-ink)">СНГ</span>
               <span class="font-bold" style="color:var(--vault-blue)">24%</span>
@@ -668,58 +666,20 @@
       </h2>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-4">
-      <div class="post-preview">
-        <div class="post-preview-header">
-          <div class="post-preview-avatar" style="background:linear-gradient(135deg,#A855F7,#7E22CE)">С</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-bold truncate" style="color:var(--vault-ink)">СТРИМ TEAM</div>
-            <div class="text-[10px]" style="color:var(--vault-ink-muted)">2 часа назад</div>
-          </div>
+    <div id="recent-posts-container" class="grid md:grid-cols-3 gap-4">
+      <div class="vault-card p-8 md:col-span-3 text-center" id="posts-empty-state">
+        <div class="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style="background:rgba(10,115,232,0.1)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#0A73E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <p>🚀 <b>Hamster Kombat 2.0 — когда листинг?</b><br><br>Ожидаемый сезон 2 крипто-игры обещает дроп токенов более щедрый, чем первый. Команда намекнула на дату в официальном канале...</p>
-        <div class="post-stats">
-          <span>👁 268K</span>
-          <span>💬 1.2K</span>
-          <span>🔁 340</span>
-        </div>
-      </div>
-
-      <div class="post-preview">
-        <div class="post-preview-header">
-          <div class="post-preview-avatar" style="background:linear-gradient(135deg,#A855F7,#7E22CE)">С</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-bold truncate" style="color:var(--vault-ink)">СТРИМ TEAM</div>
-            <div class="text-[10px]" style="color:var(--vault-ink-muted)">6 часов назад</div>
-          </div>
-        </div>
-        <p>💎 <b>Major Token на CoinGecko</b><br><br>Токен Major добавлен в листинг CoinGecko. Капитализация уже перевалила за $400M. Что это значит для держателей...</p>
-        <div class="post-stats">
-          <span>👁 245K</span>
-          <span>💬 890</span>
-          <span>🔁 410</span>
-        </div>
-      </div>
-
-      <div class="post-preview">
-        <div class="post-preview-header">
-          <div class="post-preview-avatar" style="background:linear-gradient(135deg,#A855F7,#7E22CE)">С</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-bold truncate" style="color:var(--vault-ink)">СТРИМ TEAM</div>
-            <div class="text-[10px]" style="color:var(--vault-ink-muted)">вчера</div>
-          </div>
-        </div>
-        <p>⚡️ <b>Notcoin: инсайды от разработчиков</b><br><br>В новой версии приложения появится функция стейкинга и возможность участвовать в управлении экосистемой. Дата релиза...</p>
-        <div class="post-stats">
-          <span>👁 289K</span>
-          <span>💬 2.1K</span>
-          <span>🔁 560</span>
-        </div>
+        <p class="font-semibold mb-1" style="color:var(--vault-ink)">Реальные посты появятся после подключения</p>
+        <p class="text-sm" id="posts-empty-text" style="color:var(--vault-ink-muted)">Чтобы увидеть актуальные публикации, автору нужно подключить канал к live-статистике Vault</p>
       </div>
     </div>
 
-    <div class="text-center mt-6">
-      <a href="https://t.me/me_twitch" target="_blank" rel="noopener" class="btn-secondary">
+    <div class="text-center mt-6" id="open-channel-link-block">
+      <a id="open-channel-link" href="https://t.me/me_twitch" target="_blank" rel="noopener" class="btn-secondary">
         Открыть канал в Telegram
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -908,194 +868,113 @@
 </div>
 
 <script>
-// ========== Growth chart ==========
-(function drawGrowthChart() {
-  const canvas = document.getElementById('growth-chart');
-  if (!canvas) return;
-
-  // Reactive sizing
-  function resize() {
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
-    canvas.height = 200 * dpr;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-    return ctx;
-  }
-
-  const ctx = resize();
-  const width = canvas.getBoundingClientRect().width;
-  const height = 200;
-  const padding = { top: 20, right: 20, bottom: 30, left: 40 };
-
-  // Mock data: 30 days growth, slight upward trend with noise
-  const days = 30;
-  const startValue = 62400;
-  const endValue = 65000;
-  const data = [];
-  for (let i = 0; i < days; i++) {
-    const progress = i / (days - 1);
-    const noise = (Math.sin(i * 1.3) * 2000) + (Math.random() * 3000 - 1500);
-    const value = startValue + (endValue - startValue) * progress + noise;
-    data.push(Math.round(value));
-  }
-
-  const maxVal = Math.max(...data);
-  const minVal = Math.min(...data);
-  const range = maxVal - minVal;
-
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
-
-  // Clear
-  ctx.clearRect(0, 0, width, height);
-
-  // Grid lines (horizontal)
-  ctx.strokeStyle = 'rgba(10,115,232,0.08)';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 4; i++) {
-    const y = padding.top + (chartHeight * i / 4);
-    ctx.beginPath();
-    ctx.moveTo(padding.left, y);
-    ctx.lineTo(padding.left + chartWidth, y);
-    ctx.stroke();
-
-    // Y-axis labels
-    const value = maxVal - (range * i / 4);
-    ctx.fillStyle = '#4B5569';
-    ctx.font = '600 11px Onest, sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(formatKShort(value), padding.left - 8, y + 4);
-  }
-
-  // X-axis labels (every 5 days)
-  for (let i = 0; i < days; i += 5) {
-    const x = padding.left + (chartWidth * i / (days - 1));
-    ctx.fillStyle = '#4B5569';
-    ctx.font = '600 10px Onest, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText((days - i) + ' д.', x, height - padding.bottom + 18);
-  }
-
-  // Gradient fill under line
-  const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartHeight);
-  gradient.addColorStop(0, 'rgba(10,115,232,0.25)');
-  gradient.addColorStop(1, 'rgba(10,115,232,0)');
-
-  ctx.beginPath();
-  ctx.moveTo(padding.left, padding.top + chartHeight);
-  data.forEach((val, i) => {
-    const x = padding.left + (chartWidth * i / (days - 1));
-    const y = padding.top + chartHeight - ((val - minVal) / range) * chartHeight;
-    if (i === 0) ctx.lineTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
-  ctx.closePath();
-  ctx.fillStyle = gradient;
-  ctx.fill();
-
-  // Line
-  ctx.beginPath();
-  data.forEach((val, i) => {
-    const x = padding.left + (chartWidth * i / (days - 1));
-    const y = padding.top + chartHeight - ((val - minVal) / range) * chartHeight;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  const lineGradient = ctx.createLinearGradient(padding.left, 0, padding.left + chartWidth, 0);
-  lineGradient.addColorStop(0, '#3D93EE');
-  lineGradient.addColorStop(1, '#0A73E8');
-  ctx.strokeStyle = lineGradient;
-  ctx.lineWidth = 3;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.stroke();
-
-  // End dot
-  const lastX = padding.left + chartWidth;
-  const lastY = padding.top + chartHeight - ((data[data.length - 1] - minVal) / range) * chartHeight;
-  ctx.beginPath();
-  ctx.arc(lastX, lastY, 6, 0, Math.PI * 2);
-  ctx.fillStyle = '#0A73E8';
-  ctx.fill();
-  ctx.strokeStyle = 'white';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  function formatKShort(v) {
-    if (v >= 1000000) return (v / 1000000).toFixed(2) + 'M';
-    if (v >= 1000) return Math.round(v / 1000) + 'K';
-    return v.toString();
+// ============================================================
+// Live данные канала (загружаются из API)
+// ============================================================
+(async function loadChannelStats() {
+  const slug = 'strim-team';
+  try {
+    const res = await fetch('/api/channel-stats?slug=' + encodeURIComponent(slug));
+    if (!res.ok) {
+      console.log('No live stats:', res.status);
+      return;
+    }
+    const data = await res.json();
+    
+    // Если бот не подключён — показать placeholder только и выйти
+    if (!data.channel || !data.channel.bot_is_admin) {
+      return;
+    }
+    
+    // 1. Показать "Live Stats" бейдж
+    const liveBadge = document.getElementById('live-stats-badge');
+    if (liveBadge) liveBadge.classList.remove('hidden');
+    
+    // 2. Заменить посты на реальные
+    if (data.recent_posts && data.recent_posts.length > 0) {
+      renderRealPosts(data.recent_posts, data.channel);
+    }
+    
+    // 3. Обновить число подписчиков (если отличается)
+    if (data.channel.subscribers) {
+      updateSubscribersCount(data.channel.subscribers);
+    }
+    
+    // 4. Если есть аватар в БД — подменить (опционально)
+    if (data.channel.avatar_url) {
+      const heroAvatar = document.querySelector('.channel-hero-avatar img');
+      if (heroAvatar) heroAvatar.src = data.channel.avatar_url;
+    }
+    
+    console.log('✅ Live stats loaded:', data);
+  } catch (err) {
+    console.error('Failed to load channel stats:', err);
   }
 })();
 
-// ========== Cart (persistent via localStorage) ==========
-const CART_KEY = 'vault-cart-v1';
-const CURRENT_CHANNEL = {"channelId": 40, "name": "СТРИМ TEAM", "color": ["#A855F7", "#7E22CE"], "letter": "С", "topic": "Стримеры и блогеры"};
-
-function formatPrice(n) {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
-}
-
-function loadCart() {
-  try {
-    const raw = localStorage.getItem(CART_KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
-  } catch (e) { return []; }
-}
-
-function saveCart(items) {
-  try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
-}
-
-let cart = loadCart();
-
-function addToCart(format, price) {
-  cart = cart.filter(item => item.channelId !== CURRENT_CHANNEL.channelId);
-  cart.push({
-    channelId: CURRENT_CHANNEL.channelId,
-    name: CURRENT_CHANNEL.name,
-    format: format,
-    price: price,
-    color: CURRENT_CHANNEL.color,
-    letter: CURRENT_CHANNEL.letter,
-    topic: CURRENT_CHANNEL.topic
-  });
-  saveCart(cart);
-  renderCart();
-
-  const btns = document.querySelectorAll('.format-card button');
-  btns.forEach(b => {
-    if (b.onclick && b.onclick.toString().includes("'" + format + "'")) {
-      const orig = b.innerHTML;
-      b.innerHTML = '✓ Добавлено';
-      setTimeout(() => { b.innerHTML = orig; }, 1500);
-    }
+function renderRealPosts(posts, channel) {
+  const container = document.getElementById('recent-posts-container');
+  if (!container) return;
+  
+  // Очищаем placeholder
+  container.innerHTML = '';
+  
+  // Берём первые 3 поста
+  posts.slice(0, 3).forEach(post => {
+    const postEl = document.createElement('div');
+    postEl.className = 'post-preview';
+    
+    const timeAgo = formatTimeAgo(new Date(post.published_at));
+    const text = (post.text || '').substring(0, 200);
+    const initial = (channel.name || '?').trim().charAt(0).toUpperCase();
+    
+    postEl.innerHTML = `
+      <div class="post-preview-header">
+        <div class="post-preview-avatar" style="background:linear-gradient(135deg,#3D93EE,#0A73E8)">${initial}</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-bold truncate" style="color:var(--vault-ink)">${escapeHtml(channel.name)}</div>
+          <div class="text-[10px]" style="color:var(--vault-ink-muted)">${timeAgo}</div>
+        </div>
+      </div>
+      <p>${escapeHtml(text)}${post.has_media ? '<br><span style="color:var(--vault-ink-muted); font-size:11px">📎 С медиа</span>' : ''}</p>
+      <div class="post-stats">
+        <span>👁 ${formatNum(post.views || 0)}</span>
+      </div>
+    `;
+    container.appendChild(postEl);
   });
 }
 
-function renderCart() {
-  const bar = document.getElementById('cart-bar');
-  if (!bar) return;
-  if (cart.length === 0) {
-    bar.classList.remove('visible');
-    return;
-  }
-  const sum = cart.reduce((acc, item) => acc + (item.price || 0), 0);
-  document.getElementById('cart-count').textContent = cart.length + (cart.length === 1 ? ' канал' : ' каналов');
-  document.getElementById('cart-sum').textContent = formatPrice(sum);
-  bar.classList.add('visible');
+function updateSubscribersCount(count) {
+  // Найти все элементы с классом которые показывают подписчиков и обновить
+  // Они отрисованы статически в HTML — пока просто логируем
+  console.log('Live subscribers:', count);
 }
 
-function goToCheckout() {
-  window.location.href = '/checkout';
+function formatNum(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K';
+  return String(n);
 }
 
-renderCart();
+function formatTimeAgo(date) {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return 'только что';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return minutes + ' мин назад';
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return hours + ' ч назад';
+  const days = Math.floor(hours / 24);
+  if (days < 7) return days + ' дн назад';
+  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+}
+
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = String(s);
+  return div.innerHTML.replace(/
+/g, '<br>');
+}
 </script>
 
 </body>
