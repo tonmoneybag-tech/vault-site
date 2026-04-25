@@ -87,6 +87,19 @@ export default async function handler(req, res) {
       ? Math.round(posts.reduce((s, p) => s + (p.views || 0), 0) / posts.length)
       : channel.avg_reach || null;
 
+    // === CPM ===
+    // Считаем только для подключённых каналов с реальными данными
+    // Формула: цена / охват × 1000
+    // Используем avg_reach_24h если есть (точный), иначе avgReach (приближённый)
+    let cpm = null;
+    let cpmReachUsed = null; // для отладки — какой охват использовали
+    const reachForCpm = channel.avg_reach_24h || avgReach;
+    const priceForCpm = channel.price_1_24;
+    if (channel.bot_is_admin && priceForCpm && reachForCpm && reachForCpm > 0) {
+      cpm = Math.round(priceForCpm / reachForCpm * 1000);
+      cpmReachUsed = channel.avg_reach_24h ? '24h' : 'avg';
+    }
+
     return res.status(200).json({
       channel: {
         id: channel.id,
@@ -98,12 +111,15 @@ export default async function handler(req, res) {
         rkn: channel.rkn,
         bot_is_admin: channel.bot_is_admin,
         live: channel.bot_is_admin && posts.length > 0,
+        price_1_24: channel.price_1_24,
       },
       stats: {
         avg_reach: avgReach,
-        avg_reach_24h: avg24,
-        avg_reach_48h: avg48,
-        avg_reach_72h: avg72,
+        avg_reach_24h: channel.avg_reach_24h || null,
+        avg_reach_48h: channel.avg_reach_48h || null,
+        avg_reach_72h: channel.avg_reach_72h || null,
+        cpm: cpm,
+        cpm_basis: cpmReachUsed,
         posts_tracked: posts.length,
       },
       recent_posts: posts.map(p => ({
