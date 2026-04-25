@@ -304,6 +304,8 @@
     70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
     100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
   }
+
+  [data-hidden="true"] { display: none !important; }
 </style>
 
 <!-- Open Graph / Twitter -->
@@ -397,7 +399,7 @@
           <div class="flex flex-wrap items-center gap-2 mb-3">
             <span class="text-[10px] font-bold px-2 py-1 rounded platform-tag-tg">TELEGRAM</span>
             <span class="text-[11px] font-bold px-2 py-1 rounded-full inline-flex items-center gap-1" style="background:rgba(10,115,232,0.12); color:var(--vault-blue); border: 1px solid rgba(10,115,232,0.2)" title="Канал проверен Vault: данные подтверждены, автор на связи"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5"/></svg>ПРОВЕРЕН VAULT</span>
-            <span id="live-stats-badge" class="hidden text-[11px] font-bold px-2 py-1 rounded-full inline-flex items-center gap-1" style="background:rgba(16,185,129,0.12); color:#059669; border: 1px solid rgba(16,185,129,0.2)" title="Канал подключён к live-статистике Vault"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#059669; box-shadow:0 0 0 0 rgba(16,185,129,0.7); animation: pulse 2s infinite;"></span>LIVE STATS</span>
+            <span id="live-stats-badge" class="text-[11px] font-bold px-2 py-1 rounded-full inline-flex items-center gap-1" data-hidden="true" style="background:rgba(16,185,129,0.12); color:#059669; border: 1px solid rgba(16,185,129,0.2)" title="Канал подключён к live-статистике Vault"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#059669; box-shadow:0 0 0 0 rgba(16,185,129,0.7); animation: pulse 2s infinite;"></span>LIVE STATS</span>
             <span class="badge-soft">Спорт</span>
           </div>
 
@@ -458,7 +460,7 @@
     </div>
 
     <!-- Growth chart - показывается только если есть данные -->
-    <div class="vault-card p-6 md:p-8 mt-4 hidden" id="growth-block">
+    <div class="vault-card p-6 md:p-8 mt-4" id="growth-block" style="display:none">
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
           <h3 class="text-lg md:text-xl font-heading" style="color:var(--vault-ink)">Динамика подписчиков</h3>
@@ -608,54 +610,9 @@
           </p>
         </div>
       </div>
-      </div>
     </div>
   </div>
 </section>
-<div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-semibold" style="color:var(--vault-ink)">СНГ</span>
-              <span class="font-bold" style="color:var(--vault-blue)">24%</span>
-            </div>
-            <div class="w-full h-2 rounded-full" style="background:rgba(10,115,232,0.1)">
-              <div class="h-full rounded-full" style="width:24%; background:linear-gradient(90deg,#3D93EE,#0A73E8)"></div>
-            </div>
-          </div>
-          <div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-semibold" style="color:var(--vault-ink)">Европа</span>
-              <span class="font-bold" style="color:var(--vault-blue)">9%</span>
-            </div>
-            <div class="w-full h-2 rounded-full" style="background:rgba(10,115,232,0.1)">
-              <div class="h-full rounded-full" style="width:9%; background:linear-gradient(90deg,#3D93EE,#0A73E8)"></div>
-            </div>
-          </div>
-          <div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-semibold" style="color:var(--vault-ink)">Другие</span>
-              <span class="font-bold" style="color:var(--vault-blue)">5%</span>
-            </div>
-            <div class="w-full h-2 rounded-full" style="background:rgba(10,115,232,0.1)">
-              <div class="h-full rounded-full" style="width:5%; background:linear-gradient(90deg,#3D93EE,#0A73E8)"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-6 pt-6 border-t border-[rgba(10,115,232,0.08)] space-y-2 text-sm">
-          <div class="flex justify-between">
-            <span style="color:var(--vault-ink-muted)">Мужчины</span>
-            <span class="font-bold" style="color:var(--vault-ink)">74%</span>
-          </div>
-          <div class="flex justify-between">
-            <span style="color:var(--vault-ink-muted)">Возраст 18-34</span>
-            <span class="font-bold" style="color:var(--vault-ink)">68%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- =================== RECENT POSTS =================== -->
 <section class="pb-12">
   <div class="max-w-6xl mx-auto px-4 md:px-8">
@@ -888,7 +845,7 @@
     
     // 1. Показать "Live Stats" бейдж
     const liveBadge = document.getElementById('live-stats-badge');
-    if (liveBadge) liveBadge.classList.remove('hidden');
+    if (liveBadge) liveBadge.removeAttribute('data-hidden');
     
     // 2. Заменить посты на реальные
     if (data.recent_posts && data.recent_posts.length > 0) {
