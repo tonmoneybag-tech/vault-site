@@ -178,33 +178,34 @@ export default async function handler(req, res) {
         await new Promise(r => setTimeout(r, 200));
       }
 
-      // 1c. Аватар канала (если ещё не загружен)
-      if (!ch.avatar_url) {
-        results.avatars_attempted++;
-        try {
-          const chatInfo = await tgCall('getChat', { chat_id: ch.telegram_chat_id });
-          if (chatInfo.ok && chatInfo.result?.photo?.big_file_id) {
-            const fileId = chatInfo.result.photo.big_file_id;
-            const fileInfo = await tgCall('getFile', { file_id: fileId });
-            if (fileInfo.ok && fileInfo.result?.file_path) {
-              // file_path - это путь типа "photos/file_123.jpg"
-              // Полный URL: https://api.telegram.org/file/bot<TOKEN>/<file_path>
-              const avatarUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileInfo.result.file_path}`;
-              // ⚠️ Этот URL содержит токен! Не годится для публичного отдачи.
-              // Сохраняем сам file_path, а отдавать через прокси-endpoint /api/channel-avatar?id=N
-              await supa(`channels?id=eq.${ch.id}`, {
-                method: 'PATCH',
-                prefer: 'return=minimal',
-                body: JSON.stringify({
-                  avatar_url: `/api/channel-avatar?id=${ch.id}`,
-                  // Сохраняем file_path в about поле для простоты, или в новой колонке
-                }),
-              });
-            }
+      // 1c. Аватар канала
+      results.avatars_attempted++;
+      try {
+        const chatInfo = await tgCall('getChat', { chat_id: ch.telegram_chat_id });
+        if (chatInfo.ok && chatInfo.result?.photo?.big_file_id) {
+          // У канала есть фото — ставим прокси-URL
+          const proxyUrl = `/api/channel-avatar?id=${ch.id}`;
+          if (ch.avatar_url !== proxyUrl) {
+            await supa(`channels?id=eq.${ch.id}`, {
+              method: 'PATCH',
+              prefer: 'return=minimal',
+              body: JSON.stringify({ avatar_url: proxyUrl }),
+            });
           }
-        } catch (e) {
-          results.errors.push(`avatar(${ch.name}): ${e.message}`);
+        } else if (chatInfo.ok && !chatInfo.result?.photo) {
+          // У канала нет аватара — обнуляем
+          if (ch.avatar_url) {
+            await supa(`channels?id=eq.${ch.id}`, {
+              method: 'PATCH',
+              prefer: 'return=minimal',
+              body: JSON.stringify({ avatar_url: null }),
+            });
+          }
+        } else if (!chatInfo.ok) {
+          results.errors.push(`getChat(${ch.name}): ${chatInfo.description}`);
         }
+      } catch (e) {
+        results.errors.push(`avatar(${ch.name}): ${e.message}`);
       }
     }
 
