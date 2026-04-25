@@ -22,7 +22,9 @@ async function supa(path) {
     },
   });
   if (!r.ok) throw new Error(`Supabase ${r.status}: ${await r.text()}`);
-  return r.json();
+  const text = await r.text();
+  if (!text) return null;
+  try { return JSON.parse(text); } catch (e) { return null; }
 }
 
 export default async function handler(req, res) {

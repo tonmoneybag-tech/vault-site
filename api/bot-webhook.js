@@ -36,7 +36,13 @@ async function supa(path, options = {}) {
     const t = await r.text();
     throw new Error(`Supabase ${r.status}: ${t}`);
   }
-  return r.json();
+  const text = await r.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return null;
+  }
 }
 
 async function findChannelByClaimCode(code) {
