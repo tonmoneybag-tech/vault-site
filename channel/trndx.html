@@ -455,7 +455,7 @@
       <div class="metric-tile">
         <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">CPM</div>
         <div class="text-3xl md:text-4xl font-black mb-1" style="font-family:'Unbounded'; letter-spacing:-0.02em; color:#DC2626">778₽</div>
-        <div class="text-xs font-semibold" style="color:var(--vault-ink-muted)" title="Cost Per Mille — стоимость 1000 просмотров">премиум-цена</div>
+        <div class="text-xs font-semibold" style="color:var(--vault-ink-muted)" title="Cost Per Mille — стоимость 1000 просмотров">стоимость 1000 показов</div>
       </div>
     </div>
 
@@ -598,8 +598,8 @@
 <!-- =================== ABOUT CHANNEL =================== -->
 <section class="pb-12">
   <div class="max-w-6xl mx-auto px-4 md:px-8">
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="md:col-span-2 vault-card p-6 md:p-8">
+    <div>
+      <div class="vault-card p-6 md:p-8">
         <h3 class="text-xl md:text-2xl font-heading mb-4" style="color:var(--vault-ink)">О канале</h3>
         <div class="space-y-4 font-medium" style="color:var(--vault-ink-muted)">
           <p>
@@ -862,8 +862,16 @@
     
     // 4. Если есть аватар в БД — подменить (опционально)
     if (data.channel.avatar_url) {
-      const heroAvatar = document.querySelector('.channel-hero-avatar img');
-      if (heroAvatar) heroAvatar.src = data.channel.avatar_url;
+      const heroAvatarDiv = document.querySelector('.channel-hero-avatar');
+      if (heroAvatarDiv) {
+        const existingImg = heroAvatarDiv.querySelector('img');
+        if (existingImg) {
+          existingImg.src = data.channel.avatar_url;
+        } else {
+          // Заменяем букву на картинку
+          heroAvatarDiv.innerHTML = '<img src="' + data.channel.avatar_url + '" alt="" loading="lazy" onerror="this.outerHTML=\'' + (data.channel.name || 'V').trim().charAt(0).toUpperCase() + '\'" style="width:100%; height:100%; object-fit:cover; border-radius:50%; display:block">';
+        }
+      }
     }
     
     console.log('✅ Live stats loaded:', data);
