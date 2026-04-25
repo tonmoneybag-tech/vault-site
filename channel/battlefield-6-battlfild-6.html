@@ -433,7 +433,7 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="metric-tile">
         <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">Подписчиков</div>
-        <div class="text-3xl md:text-4xl font-black mb-1" style="font-family:'Unbounded'; letter-spacing:-0.02em">12K</div>
+        <div class="text-3xl md:text-4xl font-black mb-1" id="metric-subs" style="font-family:'Unbounded'; letter-spacing:-0.02em">12K</div>
         <div class="text-xs font-semibold growth-up flex items-center gap-1">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 15l7-7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           +4.2% за месяц
@@ -442,13 +442,13 @@
 
       <div class="metric-tile">
         <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">Средний охват</div>
-        <div class="text-3xl md:text-4xl font-black mb-1" style="font-family:'Unbounded'; letter-spacing:-0.02em">4K</div>
+        <div class="text-3xl md:text-4xl font-black mb-1" id="metric-reach" style="font-family:'Unbounded'; letter-spacing:-0.02em">4K</div>
         <div class="text-xs font-semibold" style="color:var(--vault-ink-muted)">~33% от подписчиков</div>
       </div>
 
       <div class="metric-tile">
         <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">ER (вовлечённость)</div>
-        <div class="text-3xl md:text-4xl font-black mb-1" style="font-family:'Unbounded'; letter-spacing:-0.02em">22%</div>
+        <div class="text-3xl md:text-4xl font-black mb-1" id="metric-er" style="font-family:'Unbounded'; letter-spacing:-0.02em">22%</div>
         <div class="text-xs font-semibold growth-up">выше среднего</div>
       </div>
 
@@ -857,6 +857,9 @@
       updateSubscribersCount(data.channel.subscribers);
     }
     
+    // 3b. Обновить охват и прочие метрики
+    updateLiveStats(data.stats, data.channel);
+    
     // 4. Если есть аватар в БД — подменить (опционально)
     if (data.channel.avatar_url) {
       const heroAvatar = document.querySelector('.channel-hero-avatar img');
@@ -903,9 +906,31 @@ function renderRealPosts(posts, channel) {
 }
 
 function updateSubscribersCount(count) {
-  // Найти все элементы с классом которые показывают подписчиков и обновить
-  // Они отрисованы статически в HTML — пока просто логируем
   console.log('Live subscribers:', count);
+  // Обновляем плитку "Подписчиков"
+  const subsEl = document.getElementById('metric-subs');
+  if (subsEl) {
+    subsEl.textContent = formatNum(count);
+  }
+}
+
+function updateLiveStats(stats, channelData) {
+  if (!stats) return;
+  
+  // Обновляем средний охват
+  if (stats.avg_reach && stats.avg_reach > 0) {
+    const reachEl = document.getElementById('metric-reach');
+    if (reachEl) reachEl.textContent = formatNum(stats.avg_reach);
+    
+    // Обновляем подпись "X% от подписчиков"
+    if (channelData && channelData.subscribers) {
+      const pctEl = document.querySelector('#metric-reach + .text-xs');
+      if (pctEl) {
+        const pct = Math.round(stats.avg_reach / channelData.subscribers * 100);
+        pctEl.textContent = '~' + pct + '% от подписчиков';
+      }
+    }
+  }
 }
 
 function formatNum(n) {
