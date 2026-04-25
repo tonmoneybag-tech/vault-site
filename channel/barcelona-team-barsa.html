@@ -454,7 +454,7 @@
 
       <div class="metric-tile">
         <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">CPM</div>
-        <div class="text-3xl md:text-4xl font-black mb-1" style="font-family:'Unbounded'; letter-spacing:-0.02em; color:#059669">157₽</div>
+        <div class="text-3xl md:text-4xl font-black mb-1" id="metric-cpm" style="font-family:'Unbounded'; letter-spacing:-0.02em; color:var(--vault-ink-muted)">—</div>
         <div class="text-xs font-semibold" style="color:var(--vault-ink-muted)" title="Cost Per Mille — стоимость 1000 просмотров">стоимость 1000 показов</div>
       </div>
     </div>
@@ -937,6 +937,26 @@ function updateLiveStats(stats, channelData) {
         const pct = Math.round(stats.avg_reach / channelData.subscribers * 100);
         pctEl.textContent = '~' + pct + '% от подписчиков';
       }
+    }
+  }
+  
+  // === CPM ===
+  // Показываем CPM только если бот подключён и есть данные
+  const cpmEl = document.getElementById('metric-cpm');
+  if (cpmEl) {
+    if (stats.cpm && stats.cpm > 0) {
+      const cpm = stats.cpm;
+      cpmEl.textContent = cpm + '₽';
+      // Цвет по диапазону
+      let color;
+      if (cpm < 200) color = '#059669';
+      else if (cpm < 500) color = 'var(--vault-ink)';
+      else color = '#DC2626';
+      cpmEl.style.color = color;
+    } else {
+      // Канал не подключён или нет данных — прочерк
+      cpmEl.textContent = '—';
+      cpmEl.style.color = 'var(--vault-ink-muted)';
     }
   }
 }

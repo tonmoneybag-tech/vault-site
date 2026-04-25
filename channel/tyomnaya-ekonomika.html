@@ -947,6 +947,26 @@ function updateLiveStats(stats, channelData) {
       }
     }
   }
+  
+  // === CPM ===
+  // Показываем CPM только если бот подключён и есть данные
+  const cpmEl = document.getElementById('metric-cpm');
+  if (cpmEl) {
+    if (stats.cpm && stats.cpm > 0) {
+      const cpm = stats.cpm;
+      cpmEl.textContent = cpm + '₽';
+      // Цвет по диапазону
+      let color;
+      if (cpm < 200) color = '#059669';
+      else if (cpm < 500) color = 'var(--vault-ink)';
+      else color = '#DC2626';
+      cpmEl.style.color = color;
+    } else {
+      // Канал не подключён или нет данных — прочерк
+      cpmEl.textContent = '—';
+      cpmEl.style.color = 'var(--vault-ink-muted)';
+    }
+  }
 }
 
 function formatNum(n) {
