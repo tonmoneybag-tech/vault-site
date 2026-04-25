@@ -1896,11 +1896,16 @@ function firstLetter(name) {
   const cleaned = name.replace(/^[\s\p{Emoji}\p{S}]+/gu, '');
   return cleaned.trim().charAt(0).toUpperCase() || 'V';
 }
+// Live данные с сервера (заполняются после загрузки)
+let LIVE_DATA = {};
+
 function renderCpm(c) {
-  if (!c.price || !c.reach) {
+  // CPM показываем только для каналов с подключённым ботом
+  const live = LIVE_DATA[c.id];
+  if (!live || !live.bot || !live.cpm) {
     return '<div class="font-black text-sm md:text-base" style="color:var(--vault-ink-muted)">—</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">CPM</div>';
   }
-  const cpm = Math.round(c.price / c.reach * 1000);
+  const cpm = live.cpm;
   let color;
   if (cpm < 200) color = '#059669';
   else if (cpm < 500) color = 'var(--vault-ink)';
@@ -1965,7 +1970,16 @@ function renderChannelCard(c) {
     : `<a href="${c.link}" target="_blank" rel="noopener" class="cart-btn cart-btn-add" style="text-decoration:none">Подробнее</a>`;
 
   const slug = SLUGS[c.id];
-  const avatarUrl = slug && AVATARS_AVAILABLE.includes(slug) ? `/avatars/${slug}.jpg` : null;
+  // Аватар: 1) из live-данных бота 2) из статичной папки 3) буква
+  const live = LIVE_DATA[c.id];
+  let avatarUrl = null;
+  if (live && live.avatar_url) {
+    avatarUrl = live.avatar_url;
+  } else if (slug && AVATARS_AVAILABLE.includes(slug)) {
+    avatarUrl = `/avatars/${slug}.jpg`;
+  }
+  // Подписчики: из live если есть, иначе из миграции
+  const subscribersDisplay = (live && live.subscribers) ? live.subscribers : c.subs;
 
   return `
     <div class="channel-card p-6 ${inCart ? 'in-cart' : ''}" data-id="${c.id}">
@@ -1978,6 +1992,7 @@ function renderChannelCard(c) {
             </a>
             <span class="text-[10px] font-bold px-1.5 py-0.5 rounded platform-tag-tg">TG</span>
             ${c.rkn ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(16,185,129,0.12); color:#059669" title="Канал зарегистрирован в РКН">РКН ✓</span>' : ''}
+            ${(LIVE_DATA[c.id] && LIVE_DATA[c.id].bot) ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded inline-flex items-center gap-1" style="background:rgba(16,185,129,0.12); color:#059669" title="Канал подключён к Vault — реальная статистика"><span style="display:inline-block; width:5px; height:5px; border-radius:50%; background:#059669"></span>LIVE</span>' : ''}
             ${c.verified ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded inline-flex items-center gap-0.5" style="background:rgba(10,115,232,0.12); color:var(--vault-blue)" title="Канал проверен Vault: данные подтверждены, автор на связи"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" style="margin-right:-1px"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5"/></svg>Проверен</span>' : ''}
           </div>
           <div class="flex items-center gap-2 flex-wrap">
@@ -1988,7 +2003,7 @@ function renderChannelCard(c) {
       </div>
 
       <div class="grid grid-cols-4 gap-1 mb-5 text-center">
-        <div><div class="font-black text-sm md:text-base" style="color:var(--vault-ink); font-family:'Unbounded'">${formatNum(c.subs)}</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Подп.</div></div>
+        <div><div class="font-black text-sm md:text-base" style="color:var(--vault-ink); font-family:'Unbounded'">${formatNum(subscribersDisplay)}</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Подп.</div></div>
         <div><div class="font-black text-sm md:text-base" style="color:var(--vault-ink); font-family:'Unbounded'">${formatNum(c.reach)}</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">Охват</div></div>
         <div><div class="font-black text-sm md:text-base" style="color:var(--vault-ink); font-family:'Unbounded'">~${c.er}%</div><div class="text-[9px] md:text-[10px] font-bold uppercase" style="color:var(--vault-ink-muted)">ER</div></div>
         <div title="Cost Per Mille — цена за 1000 просмотров">${renderCpm(c)}</div>
@@ -2142,6 +2157,23 @@ document.getElementById('total-subs').textContent = formatNum(totalSubs) + '+';
 renderTopicChips();
 renderGrid();
 renderCartBar();
+
+// === Live данные: подгружаем статусы ботов и считаем CPM ===
+(async function loadLiveData() {
+  try {
+    const res = await fetch('/api/channels-summary');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.channels) {
+      LIVE_DATA = data.channels;
+      // Перерендерим каталог с обновлёнными CPM
+      renderGrid();
+      console.log('✅ Live data loaded:', Object.keys(LIVE_DATA).length, 'channels');
+    }
+  } catch (e) {
+    console.log('Live data not available:', e.message);
+  }
+})();
 </script>
 
 </body>
