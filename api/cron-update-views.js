@@ -38,12 +38,22 @@ async function supa(path, options = {}) {
 }
 
 async function tgCall(method, payload) {
-  const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  return r.json();
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const text = await r.text();
+    if (!text) return { ok: false, description: `Empty response (HTTP ${r.status})` };
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      return { ok: false, description: `Invalid JSON: ${text.substring(0, 100)}` };
+    }
+  } catch (err) {
+    return { ok: false, description: `Network error: ${err.message}` };
+  }
 }
 
 async function forwardAndGetViews(channelTgId, messageId) {

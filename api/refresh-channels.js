@@ -34,12 +34,24 @@ async function supa(path, options = {}) {
 }
 
 async function tgCall(method, payload) {
-  const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  return r.json();
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const text = await r.text();
+    if (!text) {
+      return { ok: false, description: `Empty response (HTTP ${r.status})` };
+    }
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      return { ok: false, description: `Invalid JSON: ${text.substring(0, 100)}` };
+    }
+  } catch (err) {
+    return { ok: false, description: `Network error: ${err.message}` };
+  }
 }
 
 export default async function handler(req, res) {
@@ -54,6 +66,7 @@ export default async function handler(req, res) {
   }
 
   const results = {
+    bot_check: null,
     channels_processed: 0,
     subscribers_updated: 0,
     views_updated: 0,
@@ -62,6 +75,19 @@ export default async function handler(req, res) {
   };
 
   try {
+    // 0. Проверяем что бот вообще работает
+    const me = await tgCall('getMe', {});
+    if (!me.ok) {
+      return res.status(500).json({
+        ok: false,
+        error: 'Bot token not working',
+        details: me.description,
+        bot_token_set: !!BOT_TOKEN,
+        bot_token_length: BOT_TOKEN ? BOT_TOKEN.length : 0,
+      });
+    }
+    results.bot_check = { username: me.result.username, id: me.result.id };
+
     // 1. Берём все подключённые каналы
     const channels = await supa(
       `channels?bot_is_admin=eq.true&telegram_chat_id=not.is.null&select=id,name,telegram_chat_id,subscribers,avatar_url`
