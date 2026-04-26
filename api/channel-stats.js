@@ -82,10 +82,16 @@ export default async function handler(req, res) {
     const avg48 = compute(48);
     const avg72 = compute(72);
 
-    // Итоговый средний охват (все 10 последних)
-    const avgReach = posts.length
-      ? Math.round(posts.reduce((s, p) => s + (p.views || 0), 0) / posts.length)
-      : channel.avg_reach || null;
+    // Итоговый средний охват:
+    //   1) Из views последних постов (точный live)
+    //   2) Если все views=0 (Telegram ещё не обновил) — берём avg_reach из БД (резерв)
+    let avgReach = null;
+    if (posts.length > 0) {
+      const fromPosts = Math.round(posts.reduce((s, p) => s + (p.views || 0), 0) / posts.length);
+      avgReach = fromPosts > 0 ? fromPosts : (channel.avg_reach || null);
+    } else {
+      avgReach = channel.avg_reach || null;
+    }
 
     // === CPM ===
     // Считаем только для подключённых каналов с реальными данными
