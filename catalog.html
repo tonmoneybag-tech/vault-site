@@ -1879,7 +1879,7 @@ const CHANNELS = [
   }
 ];
 
-let filters = { search: '', topic: 'all', subsMin: null, subsMax: null, priceMin: null, priceMax: null, sort: 'subs-desc', rkn: false, verified: false };
+let filters = { search: '', topic: 'all', subsMin: null, subsMax: null, priceMin: null, priceMax: null, sort: 'subs-desc', rkn: false, verified: false, showAll: false };
 
 // Slugs каналов, для которых скачан настоящий аватар (из TGStat). Для остальных — буква.
 const AVATARS_AVAILABLE = ['tyomnaya-ekonomika', 'media-bloknot'];
@@ -1915,6 +1915,16 @@ function renderCpm(c) {
 
 function filterChannels() {
   let list = CHANNELS.slice();
+
+  // По умолчанию показываем только Live-каналы (с подключённым ботом)
+  // Если включён showAll — показываем всё
+  if (!filters.showAll) {
+    list = list.filter(c => {
+      const live = LIVE_DATA[c.id];
+      return live && live.bot === true;
+    });
+  }
+
   if (filters.search) {
     const q = filters.search.toLowerCase();
     list = list.filter(c => c.name.toLowerCase().includes(q));
@@ -2029,12 +2039,45 @@ function renderGrid() {
   const empty = document.getElementById('empty-state');
   document.getElementById('results-count').textContent = list.length;
 
+  // Считаем сколько каналов скрыто
+  const liveCount = CHANNELS.filter(c => LIVE_DATA[c.id]?.bot === true).length;
+  const hiddenCount = CHANNELS.length - liveCount;
+
+  // Показываем плашку с переключателем «Показать все каналы»
+  let showAllBanner = '';
+  if (!filters.showAll && hiddenCount > 0) {
+    showAllBanner = `
+      <div class="md:col-span-2 lg:col-span-3 vault-card p-5 mb-2 text-center" style="background:linear-gradient(135deg, rgba(10,115,232,0.08), rgba(16,185,129,0.05)); border:1px dashed rgba(10,115,232,0.25)">
+        <div class="text-sm font-semibold mb-2" style="color:var(--vault-ink)">
+          Показаны только каналы с <strong style="color:#059669">● LIVE</strong>-статистикой (${liveCount})
+        </div>
+        <div class="text-xs mb-3" style="color:var(--vault-ink-muted)">
+          Остальные ${hiddenCount} каналов ожидают подключения авторами.
+        </div>
+        <button onclick="filters.showAll = true; renderGrid();" class="text-xs font-bold px-4 py-2 rounded-lg" style="background:var(--vault-blue); color:white">
+          Показать все ${CHANNELS.length} каналов
+        </button>
+      </div>
+    `;
+  } else if (filters.showAll) {
+    showAllBanner = `
+      <div class="md:col-span-2 lg:col-span-3 vault-card p-3 mb-2 text-center" style="background:rgba(10,115,232,0.04)">
+        <div class="text-xs" style="color:var(--vault-ink-muted)">
+          Показаны все каналы. Каналы без бейджа <strong style="color:#059669">● LIVE</strong> используют примерные цифры.
+          <button onclick="filters.showAll = false; renderGrid();" class="font-bold underline ml-2" style="color:var(--vault-blue)">
+            Скрыть неподключённые
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
   if (list.length === 0) {
-    grid.innerHTML = '';
+    grid.innerHTML = showAllBanner;
     empty.classList.remove('hidden');
   } else {
     empty.classList.add('hidden');
-    grid.innerHTML = list.map(renderChannelCard).join('');
+    grid.innerHTML = showAllBanner + list.map(renderChannelCard).join('');
   }
 }
 
