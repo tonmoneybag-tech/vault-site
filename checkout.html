@@ -449,11 +449,11 @@
           <div class="text-lg md:text-xl font-black" style="font-family:'Unbounded'" id="metric-total-subs">—</div>
         </div>
         <div class="text-center">
-          <div class="text-xs opacity-75 mb-1">Охват 24ч</div>
+          <div class="text-xs opacity-75 mb-1" id="metric-reach-label">Охват 24ч</div>
           <div class="text-lg md:text-xl font-black" style="font-family:'Unbounded'" id="metric-total-reach">—</div>
         </div>
         <div class="text-center">
-          <div class="text-xs opacity-75 mb-1">Ср. CPM</div>
+          <div class="text-xs opacity-75 mb-1">Средний CPM</div>
           <div class="text-lg md:text-xl font-black" style="font-family:'Unbounded'" id="metric-avg-cpm">—</div>
         </div>
       </div>
@@ -678,13 +678,30 @@ async function loadOrderMetrics() {
     let cpmValues = [];
     let counted = 0;
 
+    // Коэффициенты охвата по формату
+    // 1/24 → 1.0 (базовый суточный охват)
+    // 2/48 → 1.4 (~+40% за вторые сутки)
+    // 3/72 → 1.7 (~+30% за третьи сутки)
+    const reachMultiplier = (format) => {
+      if (format === '2/48') return 1.4;
+      if (format === '3/72') return 1.7;
+      return 1.0; // 1/24 и неизвестные
+    };
+
     for (const item of ORDER_ITEMS) {
       const chData = live[item.channelId];
       if (!chData) continue;
       counted++;
+      const baseReach = chData.avg_reach || 0;
+      const adjustedReach = baseReach * reachMultiplier(item.format);
       if (chData.subscribers) totalSubs += chData.subscribers;
-      if (chData.avg_reach) totalReach += chData.avg_reach;
-      if (chData.cpm) cpmValues.push(chData.cpm);
+      if (adjustedReach > 0) totalReach += adjustedReach;
+      // CPM с учётом коэффициента (та же цена, больший охват — ниже CPM)
+      if (chData.cpm && reachMultiplier(item.format) > 1) {
+        cpmValues.push(Math.round(chData.cpm / reachMultiplier(item.format)));
+      } else if (chData.cpm) {
+        cpmValues.push(chData.cpm);
+      }
     }
 
     if (counted === 0) {
@@ -692,11 +709,25 @@ async function loadOrderMetrics() {
       return;
     }
 
+    // Подпись охвата: если все товары в корзине одного формата — пишем точно
+    const formats = [...new Set(ORDER_ITEMS.map(i => i.format))];
+    const reachLabel = document.getElementById('metric-reach-label');
+    if (reachLabel) {
+      if (formats.length === 1) {
+        const f = formats[0];
+        if (f === '2/48') reachLabel.textContent = 'Охват 48ч';
+        else if (f === '3/72') reachLabel.textContent = 'Охват 72ч';
+        else reachLabel.textContent = 'Охват 24ч';
+      } else {
+        reachLabel.textContent = 'Общий охват';
+      }
+    }
+
     metricsBlock.style.display = 'grid';
     document.getElementById('metric-total-subs').textContent =
       totalSubs > 0 ? formatNumK(totalSubs) : '—';
     document.getElementById('metric-total-reach').textContent =
-      totalReach > 0 ? formatNumK(totalReach) : '—';
+      totalReach > 0 ? formatNumK(Math.round(totalReach)) : '—';
     document.getElementById('metric-avg-cpm').textContent =
       cpmValues.length > 0
         ? Math.round(cpmValues.reduce((s, v) => s + v, 0) / cpmValues.length) + ' ₽'
