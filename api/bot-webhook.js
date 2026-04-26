@@ -16,6 +16,14 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 // Секретный токен для проверки что запрос от Telegram (задаётся при setWebhook)
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || '';
 
+// Список ID модераторов (через запятую). Только они могут одобрять/отклонять каналы.
+// Берём из MODERATOR_IDS, или если не задано — из STORAGE_CHAT
+const MODERATOR_IDS = (process.env.MODERATOR_TELEGRAM_IDS || process.env.TELEGRAM_STATS_STORAGE_CHAT || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean)
+  .map(s => parseInt(s));
+
 // =======================================================
 // Supabase REST helpers (без sdk, чтобы не тащить npm)
 // =======================================================
@@ -351,6 +359,164 @@ async function handleEditedChannelPost(update) {
 }
 
 // =======================================================
+// МОДЕРАЦИЯ КАНАЛОВ
+// =======================================================
+
+// Простое хранилище состояний "модератор ожидает ввод причины отклонения"
+// На serverless оно не персистится между вызовами, поэтому используем БД.
+// Запишем pending state в саму запись канала (поле pending_rejection_by)
+
+async function handleModerationCallback(query) {
+  const userId = query.from.id;
+  const chatId = query.message.chat.id;
+  const messageId = query.message.message_id;
+  const data = query.data; // mod:approve:123 или mod:reject:123
+
+  // Проверка прав
+  if (!MODERATOR_IDS.includes(userId)) {
+    await tgCall('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: '❌ У вас нет прав на модерацию',
+      show_alert: true,
+    });
+    return;
+  }
+
+  const parts = data.split(':');
+  const action = parts[1];
+  const channelId = parseInt(parts[2]);
+
+  if (!action || !channelId) {
+    await tgCall('answerCallbackQuery', { callback_query_id: query.id, text: 'Неверный формат' });
+    return;
+  }
+
+  // Найдём канал
+  const channels = await supa(`channels?id=eq.${channelId}&select=*&limit=1`);
+  if (!channels || !channels.length) {
+    await tgCall('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: '❌ Канал не найден',
+      show_alert: true,
+    });
+    return;
+  }
+  const channel = channels[0];
+
+  if (channel.status !== 'pending') {
+    await tgCall('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: `Канал уже обработан (статус: ${channel.status})`,
+      show_alert: true,
+    });
+    return;
+  }
+
+  if (action === 'approve') {
+    // Одобряем канал
+    await updateChannel(channel.id, {
+      status: 'approved',
+      moderated_at: new Date().toISOString(),
+      moderated_by: userId,
+    });
+
+    await tgCall('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: '✅ Канал одобрен',
+    });
+
+    // Обновляем сообщение с новой меткой
+    await tgCall('editMessageText', {
+      chat_id: chatId,
+      message_id: messageId,
+      text: query.message.text + '\n\n✅ <b>ОДОБРЕНО</b>',
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🌐 Открыть на сайте', url: `https://vaultads.ru/channel/${channel.slug}` }],
+        ],
+      },
+    });
+
+    // Уведомляем автора (если у него @username — пытаемся написать через resolveUsername)
+    // Bot API не позволяет писать юзерам напрямую без их предыдущего /start.
+    // Но если он начинал диалог с ботом — мы можем найти его chat_id.
+    // Пока просто инструктивное сообщение со ссылкой и кодом.
+    // Альтернатива: ничего не делаем — автор увидит результат на сайте.
+
+    // Если submitted_by_telegram - это @username, попробуем уведомить
+    // Через Bot API мы не можем найти chat_id по username без активного диалога.
+    // Поэтому оставим уведомление модератору с инструкцией:
+    if (channel.submitted_by_telegram) {
+      const userMention = channel.submitted_by_telegram.startsWith('@')
+        ? channel.submitted_by_telegram
+        : '@' + channel.submitted_by_telegram;
+      await tgCall('sendMessage', {
+        chat_id: chatId,
+        text:
+          `Не забудьте написать автору <b>${escapeHtml(userMention)}</b>:\n\n` +
+          `<i>Привет! Ваш канал <b>${escapeHtml(channel.name)}</b> одобрен и опубликован на vaultads.ru/channel/${channel.slug}\n\n` +
+          `Чтобы подключить live-статистику (бейдж «● LIVE»):\n` +
+          `1. Добавьте @vault_analytics_bot админом в канал\n` +
+          `2. Напишите боту команду: <code>/claim ${channel.claim_code}</code></i>`,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      });
+    }
+  } else if (action === 'reject') {
+    // Запрашиваем причину отклонения
+    // Помечаем что мы ждём ввод причины от этого модератора
+    await updateChannel(channel.id, {
+      status: 'awaiting_rejection_reason',
+      moderated_by: userId,
+    });
+
+    await tgCall('answerCallbackQuery', {
+      callback_query_id: query.id,
+      text: 'Пришлите причину следующим сообщением',
+    });
+
+    await tgCall('editMessageText', {
+      chat_id: chatId,
+      message_id: messageId,
+      text: query.message.text + '\n\n⏳ <b>Ожидаю причину отклонения...</b>\nПросто пришлите её следующим сообщением',
+      parse_mode: 'HTML',
+    });
+  }
+}
+
+async function handleRejectionReason(message) {
+  const userId = message.from.id;
+  const text = message.text || '';
+
+  // Найдём канал ожидающий причины от этого модератора
+  const channels = await supa(
+    `channels?status=eq.awaiting_rejection_reason&moderated_by=eq.${userId}&select=*&order=submitted_at.desc&limit=1`
+  );
+
+  if (!channels || !channels.length) return false; // не наш случай
+
+  const channel = channels[0];
+
+  // Сохраняем отклонение
+  await updateChannel(channel.id, {
+    status: 'rejected',
+    moderated_at: new Date().toISOString(),
+    rejection_reason: text.substring(0, 500),
+  });
+
+  await sendMessage(message.chat.id,
+    `❌ Канал <b>${escapeHtml(channel.name)}</b> отклонён.\n\n` +
+    `<b>Причина:</b> ${escapeHtml(text.substring(0, 500))}\n\n` +
+    (channel.submitted_by_telegram
+      ? `Не забудьте написать автору ${escapeHtml(channel.submitted_by_telegram)} с причиной отказа.`
+      : '')
+  );
+
+  return true;
+}
+
+// =======================================================
 // MAIN HANDLER
 // =======================================================
 
@@ -375,12 +541,24 @@ export default async function handler(req, res) {
   const update = req.body;
 
   try {
+    // 0. Callback от inline-кнопок (модерация)
+    if (update.callback_query && update.callback_query.data?.startsWith('mod:')) {
+      await handleModerationCallback(update.callback_query);
+      return res.status(200).json({ ok: true });
+    }
+
     // 1. Личные сообщения от юзера
     if (update.message) {
       const msg = update.message;
       const text = msg.text || '';
 
       if (msg.chat.type === 'private') {
+        // Сначала проверяем — может быть это причина отклонения от модератора
+        if (MODERATOR_IDS.includes(msg.from.id) && !text.startsWith('/')) {
+          const handled = await handleRejectionReason(msg);
+          if (handled) return res.status(200).json({ ok: true });
+        }
+
         if (text.startsWith('/start')) {
           await handleStart(msg);
         } else if (text.startsWith('/claim')) {

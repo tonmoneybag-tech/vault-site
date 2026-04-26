@@ -31,12 +31,16 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Берём ВСЕ одобренные каналы — и из миграции (с site_id), и новые (без)
     const channels = await supa(
-      `channels?select=site_id,slug,bot_is_admin,subscribers,avg_reach,avg_reach_24h,avatar_url,price_1_24&site_id=not.is.null`
+      `channels?status=eq.approved&select=id,site_id,slug,name,topic,topic_label,bot_is_admin,subscribers,avg_reach,avg_reach_24h,avatar_url,price_1_24,price_2_48,price_3_72,link,rkn,verified`
     );
 
-    // Преобразуем в map по site_id для быстрого доступа
+    // Преобразуем в map по site_id для быстрого доступа в каталоге
     const byId = {};
+    // Также собираем список новых каналов (без site_id) — они появились через форму
+    const newChannels = [];
+
     for (const ch of channels) {
       // CPM считаем только если бот подключён
       let cpm = null;
@@ -46,7 +50,8 @@ export default async function handler(req, res) {
           cpm = Math.round(ch.price_1_24 / reach * 1000);
         }
       }
-      byId[ch.site_id] = {
+
+      const summary = {
         slug: ch.slug,
         bot: !!ch.bot_is_admin,
         subscribers: ch.subscribers || null,
@@ -54,9 +59,34 @@ export default async function handler(req, res) {
         cpm: cpm,
         avatar_url: ch.avatar_url || null,
       };
+
+      if (ch.site_id) {
+        // Старый канал из миграции — индексируем по site_id
+        byId[ch.site_id] = summary;
+      } else {
+        // Новый канал — добавляем в список с полной инфой
+        newChannels.push({
+          id: ch.id,
+          slug: ch.slug,
+          name: ch.name,
+          topic: ch.topic,
+          topic_label: ch.topic_label,
+          subs: ch.subscribers || 0,
+          reach: ch.avg_reach || 0,
+          price: ch.price_1_24 || 0,
+          price_2_48: ch.price_2_48,
+          price_3_72: ch.price_3_72,
+          link: ch.link,
+          rkn: ch.rkn,
+          verified: ch.verified,
+          bot: !!ch.bot_is_admin,
+          avatar_url: ch.avatar_url,
+          cpm: cpm,
+        });
+      }
     }
 
-    return res.status(200).json({ channels: byId });
+    return res.status(200).json({ channels: byId, new_channels: newChannels });
   } catch (err) {
     console.error('channels-summary error:', err);
     return res.status(500).json({ error: String(err) });
