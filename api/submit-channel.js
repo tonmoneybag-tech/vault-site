@@ -143,7 +143,15 @@ export default async function handler(req, res) {
     }
 
     if (price124 < 100) {
-      return res.status(400).json({ error: 'Цена должна быть от 100 ₽' });
+      return res.status(400).json({ error: 'Цена 1/24 должна быть от 100 ₽' });
+    }
+
+    if (!price248 || price248 < 100) {
+      return res.status(400).json({ error: 'Цена 2/48 обязательна, минимум 100 ₽' });
+    }
+
+    if (!price372 || price372 < 100) {
+      return res.status(400).json({ error: 'Цена 3/72 обязательна, минимум 100 ₽' });
     }
 
     if (description.length > 500) {
