@@ -735,6 +735,21 @@
       </p>
     </div>
 
+    <!-- ВАЖНО: подключение бота обязательно -->
+    <div class="rounded-2xl p-5 mb-6" style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.4)">
+      <div class="flex items-start gap-3">
+        <div class="text-2xl flex-shrink-0">⚠️</div>
+        <div>
+          <div class="font-bold text-base mb-2" style="color:white">Перед подачей заявки добавьте бота в канал</div>
+          <ol class="space-y-1 text-sm" style="color:rgba(255,255,255,0.9)">
+            <li>1. Откройте <a href="https://t.me/vault_analytics_bot" target="_blank" class="underline font-bold" style="color:white">@vault_analytics_bot</a> и нажмите Start</li>
+            <li>2. Добавьте бота администратором в свой канал (право «Просмотр сообщений»)</li>
+            <li>3. Только после этого подавайте заявку — без бота канал не пройдёт модерацию</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
     <!-- FORM -->
     <form id="apply-form" class="space-y-4 mb-6" style="background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); padding:28px; border-radius:24px">
 
@@ -830,27 +845,34 @@
         </p>
       </div>
 
-      <!-- Claim code -->
-      <div class="rounded-2xl p-5 mb-5" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2)">
-        <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:rgba(255,255,255,0.7)">Ваш код подключения</div>
-        <div id="claim-code-display" class="text-3xl font-black mb-1" style="font-family:'Unbounded'; letter-spacing:0.05em">VLT-XXXXX</div>
-        <button type="button" onclick="copyClaimCode()" class="text-xs font-bold underline" style="color:rgba(255,255,255,0.85)">📋 Скопировать</button>
-      </div>
-
-      <!-- Инструкция подключения -->
-      <div class="rounded-2xl p-5" style="background:rgba(0,0,0,0.15)">
-        <div class="text-sm font-bold mb-3" style="color:white">📡 После одобрения подключите live-статистику:</div>
+      <!-- Что дальше -->
+      <div class="rounded-2xl p-5 mb-5" style="background:rgba(0,0,0,0.15)">
+        <div class="text-sm font-bold mb-3" style="color:white">📋 Что произойдёт дальше:</div>
         <ol class="space-y-2 text-sm" style="color:rgba(255,255,255,0.85)">
-          <li class="flex gap-2"><span class="font-bold flex-shrink-0">1.</span><span>Откройте бота <a href="https://t.me/vault_analytics_bot" target="_blank" class="underline font-bold" style="color:white">@vault_analytics_bot</a> и нажмите Start</span></li>
-          <li class="flex gap-2"><span class="font-bold flex-shrink-0">2.</span><span>Добавьте бота администратором в свой канал (с правом «Просмотр сообщений»)</span></li>
-          <li class="flex gap-2"><span class="font-bold flex-shrink-0">3.</span><span>Напишите боту команду: <code id="claim-command" class="font-mono px-2 py-1 rounded text-xs" style="background:rgba(255,255,255,0.15); font-family:'Monaco', monospace">/claim VLT-XXXXX</code></span></li>
-          <li class="flex gap-2"><span class="font-bold flex-shrink-0">4.</span><span>Канал получит бейдж <strong>«● LIVE»</strong> с реальной статистикой</span></li>
+          <li class="flex gap-2"><span class="font-bold flex-shrink-0">1.</span><span>Модератор проверит канал и его соответствие тематике</span></li>
+          <li class="flex gap-2"><span class="font-bold flex-shrink-0">2.</span><span>Если бот @vault_analytics_bot уже админ — канал автоматически получит бейдж <strong>«● LIVE»</strong> с реальной статистикой</span></li>
+          <li class="flex gap-2"><span class="font-bold flex-shrink-0">3.</span><span>Вам напишет менеджер с подтверждением и ссылкой на страницу канала в каталоге</span></li>
         </ol>
       </div>
 
-      <p class="text-sm text-center mt-5 font-medium" style="color:rgba(255,255,255,0.7)">
-        ⚠️ Сохраните этот код — он понадобится после одобрения. Также вы получите его в Telegram-сообщении от модератора.
-      </p>
+      <!-- Backup claim code на случай если бот не был добавлен -->
+      <details class="rounded-2xl p-4" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15)">
+        <summary class="cursor-pointer text-sm font-semibold" style="color:rgba(255,255,255,0.9)">
+          🔑 Резервный код привязки канала (если бот не добавлен)
+        </summary>
+        <div class="mt-3">
+          <div class="text-xs mb-2" style="color:rgba(255,255,255,0.7)">
+            Если вы не успели добавить бота заранее — используйте этот код для ручной привязки канала к учётке после одобрения:
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <code id="claim-code-display" class="flex-1 text-base font-bold px-3 py-2 rounded font-mono" style="background:rgba(0,0,0,0.25); font-family:'Monaco', monospace">VLT-XXXXX</code>
+            <button type="button" onclick="copyClaimCode()" class="text-xs font-bold px-3 py-2 rounded" style="background:rgba(255,255,255,0.15); color:white">📋</button>
+          </div>
+          <div class="text-xs" style="color:rgba(255,255,255,0.6)">
+            Команда для бота: <code id="claim-command" class="font-mono px-1.5 py-0.5 rounded text-xs" style="background:rgba(255,255,255,0.1); font-family:'Monaco', monospace">/claim VLT-XXXXX</code>
+          </div>
+        </div>
+      </details>
     </div>
 
     <!-- ERROR STATE -->
