@@ -540,7 +540,7 @@
           </li>
           <li class="flex items-start gap-2">
             <svg class="flex-shrink-0 mt-1" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#0A73E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Охват 24ч: ~7K</span>
+            <span>Охват 48ч: ~7K</span>
           </li>
         </ul>
         <button onclick="addToCart('2/48', 45000)" class="btn-primary w-full justify-center">
@@ -570,7 +570,7 @@
           </li>
           <li class="flex items-start gap-2">
             <svg class="flex-shrink-0 mt-1" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#0A73E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Охват 24ч: ~8K</span>
+            <span>Охват 72ч: ~8K</span>
           </li>
         </ul>
         <button onclick="addToCart('3/72', 58000)" class="btn-primary w-full justify-center">
@@ -1027,8 +1027,21 @@ function addToCart(format, price) {
     addedAt: Date.now()
   });
   saveCart(items);
-  // Перенаправляем на чекаут
-  window.location.href = '/checkout';
+  showCartToast(format, price);
+}
+
+function showCartToast(format, price) {
+  const existing = document.getElementById('cart-toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.id = 'cart-toast';
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);background:white;border:1px solid rgba(10,115,232,0.15);border-radius:18px;padding:16px 20px;box-shadow:0 12px 40px rgba(0,0,0,0.15);display:flex;align-items:center;gap:14px;z-index:9999;transition:transform 0.3s ease;max-width:90vw;width:380px;font-family:Onest,sans-serif';
+  const itemsCount = loadCart().length;
+  const word = itemsCount === 1 ? 'размещение' : (itemsCount >= 2 && itemsCount <= 4 ? 'размещения' : 'размещений');
+  toast.innerHTML = '<div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#22C55E,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;color:#111A2B">Добавлено в корзину</div><div style="font-size:12px;color:#64748B;margin-top:2px">' + itemsCount + ' ' + word + ' · Формат ' + format + '</div></div><a href="/checkout" style="background:#0A73E8;color:white;font-weight:700;font-size:13px;padding:10px 16px;border-radius:12px;text-decoration:none;flex-shrink:0;white-space:nowrap">Оформить →</a>';
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => { toast.style.transform = 'translateX(-50%) translateY(0)'; });
+  setTimeout(() => { toast.style.transform = 'translateX(-50%) translateY(120%)'; setTimeout(() => toast.remove(), 350); }, 5000);
 }
 </script>
 </body>
