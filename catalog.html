@@ -2158,7 +2158,7 @@ renderTopicChips();
 renderGrid();
 renderCartBar();
 
-// === Live данные: подгружаем статусы ботов и считаем CPM ===
+// === Live данные: подгружаем статусы ботов, считаем CPM, добавляем новые каналы ===
 (async function loadLiveData() {
   try {
     const res = await fetch('/api/channels-summary');
@@ -2166,10 +2166,53 @@ renderCartBar();
     const data = await res.json();
     if (data.channels) {
       LIVE_DATA = data.channels;
-      // Перерендерим каталог с обновлёнными CPM
-      renderGrid();
-      console.log('✅ Live data loaded:', Object.keys(LIVE_DATA).length, 'channels');
     }
+    // Добавляем новые каналы (поданные через форму /authors и одобренные)
+    if (data.new_channels && data.new_channels.length) {
+      // Находим максимальный id чтобы новым присвоить уникальные большие id
+      const maxId = CHANNELS.reduce((max, c) => Math.max(max, c.id), 0);
+      let nextId = Math.max(maxId, 10000); // новые id с 10000+
+      for (const nc of data.new_channels) {
+        nextId++;
+        // Преобразуем в формат CHANNELS массива
+        const channelEntry = {
+          id: nextId,
+          name: nc.name,
+          topic: nc.topic,
+          topicLabel: nc.topic_label,
+          subs: nc.subs,
+          reach: nc.reach,
+          price: nc.price,
+          link: nc.link,
+          rkn: nc.rkn,
+          verified: nc.verified,
+          // Дополнительно: id из БД для подгрузки live-данных
+          dbId: nc.id,
+        };
+        CHANNELS.push(channelEntry);
+        // Заполняем LIVE_DATA для этого канала чтобы CPM/бейджи работали
+        LIVE_DATA[nextId] = {
+          slug: nc.slug,
+          bot: nc.bot,
+          subscribers: nc.subs || null,
+          avg_reach: nc.reach || null,
+          cpm: nc.cpm,
+          avatar_url: nc.avatar_url,
+        };
+        // SLUGS для генерации ссылок на страницу канала
+        if (typeof SLUGS !== 'undefined') {
+          SLUGS[nextId] = nc.slug;
+        }
+      }
+    }
+    // Перерендерим каталог
+    renderGrid();
+    // Обновим заголовок счётчика
+    const hdr = document.getElementById('total-channels-hdr');
+    if (hdr) hdr.textContent = CHANNELS.length;
+    console.log('✅ Live data loaded:',
+      Object.keys(LIVE_DATA).length, 'channels,',
+      (data.new_channels || []).length, 'new');
   } catch (e) {
     console.log('Live data not available:', e.message);
   }

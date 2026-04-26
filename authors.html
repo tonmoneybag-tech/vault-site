@@ -743,50 +743,70 @@
 
       <div>
         <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Ссылка на канал *</label>
-        <input type="text" name="channelLink" required placeholder="https://t.me/your_channel или @username" class="form-input">
+        <input type="text" name="channel_link" required placeholder="https://t.me/your_channel" class="form-input">
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Название канала *</label>
+        <input type="text" name="channel_name" required placeholder="Как назвать в каталоге" class="form-input">
       </div>
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Подписчиков *</label>
-          <input type="text" name="subscribers" required placeholder="Например, 50000" class="form-input">
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Подписчиков</label>
+          <input type="text" name="subscribers" placeholder="Опционально, например 50000" class="form-input">
         </div>
         <div>
           <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Тематика *</label>
           <select name="topic" required class="form-input">
             <option value="">Выберите</option>
-            <option>Игровые</option>
-            <option>Спорт</option>
-            <option>Крипта</option>
-            <option>Технологии и ИИ</option>
-            <option>Путешествия</option>
-            <option>Бизнес</option>
-            <option>Маркетинг</option>
-            <option>Экономика</option>
-            <option>Авто</option>
-            <option>Региональные</option>
-            <option>Стримеры и блогеры</option>
-            <option>Новости и СМИ</option>
-            <option>Кино</option>
-            <option>Другое</option>
+            <option value="gaming">Игровые</option>
+            <option value="sports">Спорт</option>
+            <option value="crypto">Крипта</option>
+            <option value="tech">Технологии и ИИ</option>
+            <option value="travel">Путешествия</option>
+            <option value="business">Бизнес</option>
+            <option value="marketing">Маркетинг</option>
+            <option value="economy">Экономика</option>
+            <option value="auto">Авто</option>
+            <option value="regional">Региональные</option>
+            <option value="streamers">Стримеры и блогеры</option>
+            <option value="news">Новости и СМИ</option>
+            <option value="cinema">Кино</option>
+            <option value="minecraft">Minecraft</option>
+            <option value="blog">Блог</option>
+            <option value="betting">Беттинг</option>
+            <option value="other">Другое</option>
           </select>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-3 gap-3">
         <div>
-          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Цена 1/24, ₽</label>
-          <input type="text" name="price" placeholder="Опционально" class="form-input">
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Цена 1/24, ₽ *</label>
+          <input type="text" name="price_1_24" required placeholder="мин. 100" class="form-input" inputmode="numeric">
         </div>
         <div>
-          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Ваш Telegram *</label>
-          <input type="text" name="telegram" required placeholder="@username" class="form-input">
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Цена 2/48, ₽</label>
+          <input type="text" name="price_2_48" placeholder="опц." class="form-input" inputmode="numeric">
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Цена 3/72, ₽</label>
+          <input type="text" name="price_3_72" placeholder="опц." class="form-input" inputmode="numeric">
         </div>
       </div>
 
       <div>
-        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Комментарий</label>
-        <textarea name="comment" rows="3" placeholder="Особенности канала, пожелания по работе..." class="form-input" style="resize:vertical;min-height:80px"></textarea>
+        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Ваш Telegram *</label>
+        <input type="text" name="submitter_telegram" required placeholder="@username" class="form-input">
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">
+          Описание канала
+          <span class="font-normal" style="color:rgba(255,255,255,0.5)">(до 500 символов)</span>
+        </label>
+        <textarea name="description" rows="3" maxlength="500" placeholder="О чём канал, какая аудитория, особенности..." class="form-input" style="resize:vertical;min-height:80px"></textarea>
       </div>
 
       <button type="submit" id="apply-submit" class="btn-white w-full justify-center !py-4">
@@ -798,20 +818,44 @@
       </p>
     </form>
 
-    <!-- SUCCESS STATE -->
-    <div id="apply-success" class="hidden text-center p-8 rounded-3xl" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3)">
-      <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background:#10B981">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <!-- SUCCESS STATE — теперь с claim-кодом -->
+    <div id="apply-success" class="hidden p-8 rounded-3xl" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3)">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background:#10B981">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="text-2xl font-display mb-2">Заявка отправлена!</h3>
+        <p class="font-medium" style="color:rgba(255,255,255,0.9)">
+          Канал на модерации. Обычно проверка занимает до 24 часов.
+        </p>
       </div>
-      <h3 class="text-2xl font-display mb-2">Заявка отправлена!</h3>
-      <p class="font-medium mb-4" style="color:rgba(255,255,255,0.9)">
-        Мы свяжемся с вами в Telegram в течение 24 часов.
+
+      <!-- Claim code -->
+      <div class="rounded-2xl p-5 mb-5" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2)">
+        <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:rgba(255,255,255,0.7)">Ваш код подключения</div>
+        <div id="claim-code-display" class="text-3xl font-black mb-1" style="font-family:'Unbounded'; letter-spacing:0.05em">VLT-XXXXX</div>
+        <button type="button" onclick="copyClaimCode()" class="text-xs font-bold underline" style="color:rgba(255,255,255,0.85)">📋 Скопировать</button>
+      </div>
+
+      <!-- Инструкция подключения -->
+      <div class="rounded-2xl p-5" style="background:rgba(0,0,0,0.15)">
+        <div class="text-sm font-bold mb-3" style="color:white">📡 После одобрения подключите live-статистику:</div>
+        <ol class="space-y-2 text-sm" style="color:rgba(255,255,255,0.85)">
+          <li class="flex gap-2"><span class="font-bold flex-shrink-0">1.</span><span>Откройте бота <a href="https://t.me/vault_analytics_bot" target="_blank" class="underline font-bold" style="color:white">@vault_analytics_bot</a> и нажмите Start</span></li>
+          <li class="flex gap-2"><span class="font-bold flex-shrink-0">2.</span><span>Добавьте бота администратором в свой канал (с правом «Просмотр сообщений»)</span></li>
+          <li class="flex gap-2"><span class="font-bold flex-shrink-0">3.</span><span>Напишите боту команду: <code id="claim-command" class="font-mono px-2 py-1 rounded text-xs" style="background:rgba(255,255,255,0.15); font-family:'Monaco', monospace">/claim VLT-XXXXX</code></span></li>
+          <li class="flex gap-2"><span class="font-bold flex-shrink-0">4.</span><span>Канал получит бейдж <strong>«● LIVE»</strong> с реальной статистикой</span></li>
+        </ol>
+      </div>
+
+      <p class="text-sm text-center mt-5 font-medium" style="color:rgba(255,255,255,0.7)">
+        ⚠️ Сохраните этот код — он понадобится после одобрения. Также вы получите его в Telegram-сообщении от модератора.
       </p>
     </div>
 
     <!-- ERROR STATE -->
     <div id="apply-error" class="hidden text-center p-6 rounded-2xl" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3)">
-      <p class="font-semibold mb-2">Не удалось отправить заявку</p>
+      <p class="font-semibold mb-2" id="apply-error-text">Не удалось отправить заявку</p>
       <p class="text-sm" style="color:rgba(255,255,255,0.8)">Попробуйте ещё раз или напишите напрямую <a href="https://t.me/maxvane" class="underline font-bold">@maxvane</a></p>
     </div>
 
@@ -850,52 +894,96 @@
       const submitText = document.getElementById('apply-submit-text');
       const successBox = document.getElementById('apply-success');
       const errorBox = document.getElementById('apply-error');
+      const errorText = document.getElementById('apply-error-text');
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         errorBox.classList.add('hidden');
 
         const formData = new FormData(form);
-        const data = {
-          type: 'channel_apply',
-          channelLink: (formData.get('channelLink') || '').trim(),
-          subscribers: (formData.get('subscribers') || '').trim(),
-          topic: (formData.get('topic') || '').trim(),
-          price: (formData.get('price') || '').trim(),
-          telegram: (formData.get('telegram') || '').trim(),
-          comment: (formData.get('comment') || '').trim(),
-          website: (formData.get('website') || '').trim()
-        };
+
+        // Honeypot — если бот заполнил скрытое поле, молча "успешно"
+        if ((formData.get('website') || '').trim()) {
+          form.classList.add('hidden');
+          successBox.classList.remove('hidden');
+          return;
+        }
 
         // Нормализуем Telegram
-        if (data.telegram && !data.telegram.startsWith('@') && !data.telegram.startsWith('http')) {
-          data.telegram = '@' + data.telegram;
+        let submitterTg = (formData.get('submitter_telegram') || '').trim();
+        if (submitterTg && !submitterTg.startsWith('@') && !submitterTg.startsWith('http')) {
+          submitterTg = '@' + submitterTg;
         }
+
+        // Парсим числа (убираем пробелы и символы)
+        const parseNum = (s) => {
+          const cleaned = (s || '').toString().replace(/[^\d]/g, '');
+          return cleaned ? parseInt(cleaned) : 0;
+        };
+
+        const data = {
+          channel_link: (formData.get('channel_link') || '').trim(),
+          channel_name: (formData.get('channel_name') || '').trim(),
+          topic: (formData.get('topic') || '').trim(),
+          subscribers: parseNum(formData.get('subscribers')),
+          price_1_24: parseNum(formData.get('price_1_24')),
+          price_2_48: parseNum(formData.get('price_2_48')),
+          price_3_72: parseNum(formData.get('price_3_72')),
+          submitter_telegram: submitterTg,
+          description: (formData.get('description') || '').trim(),
+        };
 
         submitBtn.disabled = true;
         submitText.textContent = 'Отправляем...';
 
         try {
-          const response = await fetch('/api/apply', {
+          const response = await fetch('/api/submit-channel', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
           });
 
-          if (response.ok) {
+          const result = await response.json();
+
+          if (response.ok && result.ok && result.claim_code) {
+            // Показываем claim-код в success-блоке
+            const codeDisplay = document.getElementById('claim-code-display');
+            const claimCommand = document.getElementById('claim-command');
+            if (codeDisplay) codeDisplay.textContent = result.claim_code;
+            if (claimCommand) claimCommand.textContent = '/claim ' + result.claim_code;
+
             form.classList.add('hidden');
             successBox.classList.remove('hidden');
             successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
           } else {
-            throw new Error('Server error');
+            throw new Error(result.error || 'Server error');
           }
         } catch (err) {
+          if (errorText) {
+            errorText.textContent = err.message || 'Не удалось отправить заявку';
+          }
           errorBox.classList.remove('hidden');
+          errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
           submitBtn.disabled = false;
           submitText.textContent = 'Отправить заявку';
         }
       });
     })();
+
+    // Копирование claim-кода
+    function copyClaimCode() {
+      const codeDisplay = document.getElementById('claim-code-display');
+      if (!codeDisplay) return;
+      const code = codeDisplay.textContent.trim();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => {
+          const btn = event.target;
+          const orig = btn.textContent;
+          btn.textContent = '✅ Скопировано';
+          setTimeout(() => { btn.textContent = orig; }, 1500);
+        });
+      }
+    }
   </script>
 </section>
 
