@@ -441,13 +441,13 @@
       </div>
 
       <div class="metric-tile">
-        <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">Средний охват</div>
+        <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">Охват 24ч</div>
         <div class="text-3xl md:text-4xl font-black mb-1" id="metric-reach" style="font-family:'Unbounded'; letter-spacing:-0.02em">12K</div>
         <div class="text-xs font-semibold" style="color:var(--vault-ink-muted)">~30% от подписчиков</div>
       </div>
 
       <div class="metric-tile">
-        <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">ER (вовлечённость)</div>
+        <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--vault-ink-muted)">ER 24ч</div>
         <div class="text-3xl md:text-4xl font-black mb-1" id="metric-er" style="font-family:'Unbounded'; letter-spacing:-0.02em">22%</div>
         <div class="text-xs font-semibold growth-up">выше среднего</div>
       </div>
@@ -510,7 +510,7 @@
           </li>
           <li class="flex items-start gap-2">
             <svg class="flex-shrink-0 mt-1" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#0A73E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Расчётный охват: ~12K</span>
+            <span>Охват 24ч: ~12K</span>
           </li>
         </ul>
         <button onclick="addToCart('1/24', 1900)" class="btn-primary w-full justify-center">
@@ -540,7 +540,7 @@
           </li>
           <li class="flex items-start gap-2">
             <svg class="flex-shrink-0 mt-1" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#0A73E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Расчётный охват: ~18K</span>
+            <span>Охват 24ч: ~18K</span>
           </li>
         </ul>
         <button onclick="addToCart('2/48', 2900)" class="btn-primary w-full justify-center">
@@ -570,7 +570,7 @@
           </li>
           <li class="flex items-start gap-2">
             <svg class="flex-shrink-0 mt-1" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#0A73E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Расчётный охват: ~22K</span>
+            <span>Охват 24ч: ~22K</span>
           </li>
         </ul>
         <button onclick="addToCart('3/72', 3800)" class="btn-primary w-full justify-center">
@@ -986,5 +986,50 @@ function escapeHtml(s) {
 }
 </script>
 
+
+<script>
+// === Корзина (синхронизация с каталогом через localStorage) ===
+const CART_KEY = 'vault-cart-v1';
+const CHANNEL_INFO = {
+  channelId: 32,
+  name: "\u0440\u0430\u0448\u044d\u043d \u0442\u0440\u044d\u0432\u0435\u043b \u043a\u043e\u043c\u044c\u044e\u043d\u0438\u0442\u0438 \ud83c\udf0d",
+  topicLabel: "\u0414\u0440\u0443\u0433\u043e\u0435",
+  color: ["#06B6D4", "#0891B2"],
+  letter: "\u0420"
+};
+
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
+}
+
+function saveCart(items) {
+  try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
+}
+
+function addToCart(format, price) {
+  let items = loadCart();
+  // Удаляем предыдущий заказ для этого канала (выбираем только один формат)
+  items = items.filter(i => i.channelId !== CHANNEL_INFO.channelId);
+  // Добавляем новый
+  items.push({
+    channelId: CHANNEL_INFO.channelId,
+    name: CHANNEL_INFO.name,
+    topicLabel: CHANNEL_INFO.topicLabel,
+    color: CHANNEL_INFO.color,
+    letter: CHANNEL_INFO.letter,
+    format: format,
+    price: price,
+    addedAt: Date.now()
+  });
+  saveCart(items);
+  // Перенаправляем на чекаут
+  window.location.href = '/checkout';
+}
+</script>
 </body>
 </html>
