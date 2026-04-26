@@ -413,6 +413,16 @@ async function handleModerationCallback(query) {
   }
 
   if (action === 'approve') {
+    // ⚠️ Проверяем: бот должен быть админом в канале
+    if (!channel.bot_is_admin || !channel.telegram_chat_id) {
+      await tgCall('answerCallbackQuery', {
+        callback_query_id: query.id,
+        text: '⚠️ Бот не добавлен в канал. Попросите автора добавить @vault_analytics_bot админом, потом одобрите снова',
+        show_alert: true,
+      });
+      return;
+    }
+
     // Одобряем канал
     await updateChannel(channel.id, {
       status: 'approved',
@@ -438,15 +448,7 @@ async function handleModerationCallback(query) {
       },
     });
 
-    // Уведомляем автора (если у него @username — пытаемся написать через resolveUsername)
-    // Bot API не позволяет писать юзерам напрямую без их предыдущего /start.
-    // Но если он начинал диалог с ботом — мы можем найти его chat_id.
-    // Пока просто инструктивное сообщение со ссылкой и кодом.
-    // Альтернатива: ничего не делаем — автор увидит результат на сайте.
-
-    // Если submitted_by_telegram - это @username, попробуем уведомить
-    // Через Bot API мы не можем найти chat_id по username без активного диалога.
-    // Поэтому оставим уведомление модератору с инструкцией:
+    // Уведомляем модератора с готовым текстом для автора
     if (channel.submitted_by_telegram) {
       const userMention = channel.submitted_by_telegram.startsWith('@')
         ? channel.submitted_by_telegram
@@ -454,11 +456,9 @@ async function handleModerationCallback(query) {
       await tgCall('sendMessage', {
         chat_id: chatId,
         text:
-          `Не забудьте написать автору <b>${escapeHtml(userMention)}</b>:\n\n` +
-          `<i>Привет! Ваш канал <b>${escapeHtml(channel.name)}</b> одобрен и опубликован на vaultads.ru/channel/${channel.slug}\n\n` +
-          `Чтобы подключить live-статистику (бейдж «● LIVE»):\n` +
-          `1. Добавьте @vault_analytics_bot админом в канал\n` +
-          `2. Напишите боту команду: <code>/claim ${channel.claim_code}</code></i>`,
+          `Готовый текст для автора <b>${escapeHtml(userMention)}</b>:\n\n` +
+          `<i>Канал <b>${escapeHtml(channel.name)}</b> одобрен и опубликован на vaultads.ru/channel/${channel.slug}\n\n` +
+          `Бот уже подключён, live-статистика начнёт появляться после первых публикаций.</i>`,
         parse_mode: 'HTML',
         disable_web_page_preview: true,
       });
