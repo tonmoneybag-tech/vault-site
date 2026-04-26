@@ -440,7 +440,24 @@
           <span id="items-count">0</span> <span id="items-word">размещений</span>
         </div>
       </div>
-      <div id="order-items" class="space-y-2 mb-6"></div>
+      <div id="order-items" class="space-y-2 mb-4"></div>
+
+      <!-- Метрики аудитории -->
+      <div id="order-metrics" class="grid grid-cols-3 gap-2 mb-4 pt-4 border-t border-white/20" style="display:none">
+        <div class="text-center">
+          <div class="text-xs opacity-75 mb-1">Подписчики</div>
+          <div class="text-lg md:text-xl font-black" style="font-family:'Unbounded'" id="metric-total-subs">—</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs opacity-75 mb-1">Охват 24ч</div>
+          <div class="text-lg md:text-xl font-black" style="font-family:'Unbounded'" id="metric-total-reach">—</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs opacity-75 mb-1">Ср. CPM</div>
+          <div class="text-lg md:text-xl font-black" style="font-family:'Unbounded'" id="metric-avg-cpm">—</div>
+        </div>
+      </div>
+
       <div class="pt-5 border-t border-white/20 flex items-baseline justify-between">
         <span class="text-base md:text-lg font-bold">Итого</span>
         <span class="text-3xl md:text-4xl font-black" style="font-family:'Unbounded'; letter-spacing:-0.02em" id="sum-total">0 ₽</span>
@@ -640,6 +657,59 @@ function renderOrderItems() {
 
   const subtotal = ORDER_ITEMS.reduce((s, i) => s + (i.price || 0), 0);
   document.getElementById('sum-total').textContent = formatPrice(subtotal);
+
+  // Подгружаем метрики каждого канала и считаем суммарные
+  loadOrderMetrics();
+}
+
+async function loadOrderMetrics() {
+  const metricsBlock = document.getElementById('order-metrics');
+  if (!metricsBlock) return;
+
+  try {
+    // Загружаем live-данные всех каналов одним запросом
+    const res = await fetch('/api/channels-summary');
+    if (!res.ok) return;
+    const data = await res.json();
+    const live = data.channels || {};
+
+    let totalSubs = 0;
+    let totalReach = 0;
+    let cpmValues = [];
+    let counted = 0;
+
+    for (const item of ORDER_ITEMS) {
+      const chData = live[item.channelId];
+      if (!chData) continue;
+      counted++;
+      if (chData.subscribers) totalSubs += chData.subscribers;
+      if (chData.avg_reach) totalReach += chData.avg_reach;
+      if (chData.cpm) cpmValues.push(chData.cpm);
+    }
+
+    if (counted === 0) {
+      metricsBlock.style.display = 'none';
+      return;
+    }
+
+    metricsBlock.style.display = 'grid';
+    document.getElementById('metric-total-subs').textContent =
+      totalSubs > 0 ? formatNumK(totalSubs) : '—';
+    document.getElementById('metric-total-reach').textContent =
+      totalReach > 0 ? formatNumK(totalReach) : '—';
+    document.getElementById('metric-avg-cpm').textContent =
+      cpmValues.length > 0
+        ? Math.round(cpmValues.reduce((s, v) => s + v, 0) / cpmValues.length) + ' ₽'
+        : '—';
+  } catch (e) {
+    console.log('Failed to load order metrics:', e);
+  }
+}
+
+function formatNumK(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K';
+  return String(n);
 }
 
 async function submitOrder() {
