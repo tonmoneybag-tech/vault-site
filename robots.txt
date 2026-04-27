@@ -1,9 +1,6 @@
 User-agent: *
 Allow: /
-
-# Запрещаем индексацию технических страниц
+Disallow: /api/
 Disallow: /checkout
-Disallow: /checkout.html
 
-# Sitemap
 Sitemap: https://vaultads.ru/sitemap.xml
