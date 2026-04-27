@@ -119,6 +119,25 @@ function sendMessage(chatId, text, extra = {}) {
 async function handleStart(message) {
   const chatId = message.chat.id;
   const name = message.from?.first_name || 'друг';
+  const username = message.from?.username;
+
+  // Пытаемся найти pending-заявку этого пользователя по @username и привязать chat_id
+  // Это нужно чтобы при одобрении мы могли отправить ему уведомление
+  if (username) {
+    try {
+      // Ищем pending каналы где submitted_by_telegram = "@username" или "username"
+      const pending = await supa(
+        `channels?status=eq.pending&or=(submitted_by_telegram.ilike.@${username},submitted_by_telegram.ilike.${username})&select=id&author_telegram_chat_id=is.null`
+      );
+      if (pending && pending.length) {
+        for (const ch of pending) {
+          await updateChannel(ch.id, { author_telegram_chat_id: chatId });
+        }
+      }
+    } catch (e) {
+      console.error('Failed to link author chat_id on /start:', e);
+    }
+  }
 
   await sendMessage(chatId,
     `👋 Привет, ${escapeHtml(name)}!\n\n` +
@@ -190,6 +209,7 @@ async function handleClaim(message, code) {
   await updateChannel(channel.id, {
     claimed_at: new Date().toISOString(),
     owner_telegram_id: userId,
+    author_telegram_chat_id: chatId, // сохраняем для будущих уведомлений
     verified: true,
   });
 
@@ -448,17 +468,48 @@ async function handleModerationCallback(query) {
       },
     });
 
-    // Уведомляем модератора с готовым текстом для автора
+    // === АВТО-УВЕДОМЛЕНИЕ АВТОРУ ===
+    let authorNotified = false;
+    const authorChatId = channel.author_telegram_chat_id || channel.owner_telegram_id;
+    if (authorChatId) {
+      try {
+        const notifyResult = await tgCall('sendMessage', {
+          chat_id: authorChatId,
+          text:
+            `🎉 <b>Ваш канал одобрен!</b>\n\n` +
+            `Канал <b>${escapeHtml(channel.name)}</b> опубликован в каталоге Vault.\n\n` +
+            `🔗 Страница канала на сайте:\n` +
+            `https://vaultads.ru/channel/${channel.slug}\n\n` +
+            `📊 Бот уже подключён к каналу — live-статистика начнёт появляться после первых публикаций.\n\n` +
+            `❓ Вопросы — пишите @maxvane`,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true,
+        });
+        if (notifyResult.ok) {
+          authorNotified = true;
+        }
+      } catch (e) {
+        console.error('Failed to notify author:', e);
+      }
+    }
+
+    // Сообщение модератору о результате
     if (channel.submitted_by_telegram) {
       const userMention = channel.submitted_by_telegram.startsWith('@')
         ? channel.submitted_by_telegram
         : '@' + channel.submitted_by_telegram;
+
+      const modMessage = authorNotified
+        ? `✅ Автор <b>${escapeHtml(userMention)}</b> уведомлён в личке об одобрении.`
+        : `⚠️ Не удалось автоматически уведомить автора <b>${escapeHtml(userMention)}</b> — он не нажимал /start у бота.\n\n` +
+          `Скопируйте и отправьте ему вручную:\n\n` +
+          `<i>Канал <b>${escapeHtml(channel.name)}</b> одобрен!\n` +
+          `Страница: vaultads.ru/channel/${channel.slug}\n` +
+          `Бот уже подключён, live-статистика будет появляться после публикаций.</i>`;
+
       await tgCall('sendMessage', {
         chat_id: chatId,
-        text:
-          `Готовый текст для автора <b>${escapeHtml(userMention)}</b>:\n\n` +
-          `<i>Канал <b>${escapeHtml(channel.name)}</b> одобрен и опубликован на vaultads.ru/channel/${channel.slug}\n\n` +
-          `Бот уже подключён, live-статистика начнёт появляться после первых публикаций.</i>`,
+        text: modMessage,
         parse_mode: 'HTML',
         disable_web_page_preview: true,
       });
@@ -497,21 +548,50 @@ async function handleRejectionReason(message) {
   if (!channels || !channels.length) return false; // не наш случай
 
   const channel = channels[0];
+  const reason = text.substring(0, 500);
 
   // Сохраняем отклонение
   await updateChannel(channel.id, {
     status: 'rejected',
     moderated_at: new Date().toISOString(),
-    rejection_reason: text.substring(0, 500),
+    rejection_reason: reason,
   });
 
-  await sendMessage(message.chat.id,
-    `❌ Канал <b>${escapeHtml(channel.name)}</b> отклонён.\n\n` +
-    `<b>Причина:</b> ${escapeHtml(text.substring(0, 500))}\n\n` +
-    (channel.submitted_by_telegram
-      ? `Не забудьте написать автору ${escapeHtml(channel.submitted_by_telegram)} с причиной отказа.`
-      : '')
-  );
+  // === АВТО-УВЕДОМЛЕНИЕ АВТОРУ ===
+  let authorNotified = false;
+  const authorChatId = channel.author_telegram_chat_id || channel.owner_telegram_id;
+    if (authorChatId) {
+    try {
+      const notifyResult = await tgCall('sendMessage', {
+        chat_id: authorChatId,
+        text:
+          `❌ <b>Заявка отклонена</b>\n\n` +
+          `К сожалению, ваш канал <b>${escapeHtml(channel.name)}</b> не прошёл модерацию.\n\n` +
+          `<b>Причина:</b>\n${escapeHtml(reason)}\n\n` +
+          `Если хотите обсудить — пишите @maxvane`,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      });
+      if (notifyResult.ok) {
+        authorNotified = true;
+      }
+    } catch (e) {
+      console.error('Failed to notify author about rejection:', e);
+    }
+  }
+
+  // Сообщение модератору
+  const modMessage = authorNotified
+    ? `❌ Канал <b>${escapeHtml(channel.name)}</b> отклонён.\n\n` +
+      `<b>Причина:</b> ${escapeHtml(reason)}\n\n` +
+      `✅ Автор уведомлён в личке.`
+    : `❌ Канал <b>${escapeHtml(channel.name)}</b> отклонён.\n\n` +
+      `<b>Причина:</b> ${escapeHtml(reason)}\n\n` +
+      (channel.submitted_by_telegram
+        ? `⚠️ Не забудьте написать автору ${escapeHtml(channel.submitted_by_telegram)} с причиной отказа — он не нажимал /start у бота.`
+        : '');
+
+  await sendMessage(message.chat.id, modMessage);
 
   return true;
 }
