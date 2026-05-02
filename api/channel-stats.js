@@ -118,6 +118,8 @@ export default async function handler(req, res) {
         bot_is_admin: channel.bot_is_admin,
         live: channel.bot_is_admin && posts.length > 0,
         price_1_24: channel.price_1_24,
+        price_2_48: channel.price_2_48,
+        price_3_72: channel.price_3_72,
       },
       stats: {
         avg_reach: avgReach,

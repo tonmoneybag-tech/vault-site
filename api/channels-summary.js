@@ -58,6 +58,9 @@ export default async function handler(req, res) {
         avg_reach: ch.avg_reach || null,
         cpm: cpm,
         avatar_url: ch.avatar_url || null,
+        price_1_24: ch.price_1_24 || null,
+        price_2_48: ch.price_2_48 || null,
+        price_3_72: ch.price_3_72 || null,
       };
 
       if (ch.site_id) {
