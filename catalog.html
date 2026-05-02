@@ -1960,19 +1960,34 @@ function filterChannels() {
   if (filters.topic !== 'all') list = list.filter(c => c.topic === filters.topic);
   if (filters.subsMin != null) list = list.filter(c => c.subs >= filters.subsMin);
   if (filters.subsMax != null) list = list.filter(c => c.subs <= filters.subsMax);
-  if (filters.priceMin != null) list = list.filter(c => c.price >= filters.priceMin);
-  if (filters.priceMax != null) list = list.filter(c => c.price <= filters.priceMax);
+  // Helper: актуальная цена (live из БД > статичная из миграции)
+  const getPrice = c => {
+    const live = LIVE_DATA[c.id];
+    return (live && live.price_1_24) ? live.price_1_24 : (c.price || 0);
+  };
+  // Helper: актуальный охват
+  const getReach = c => {
+    const live = LIVE_DATA[c.id];
+    return (live && live.avg_reach) ? live.avg_reach : (c.reach || 0);
+  };
+
+  if (filters.priceMin != null) list = list.filter(c => getPrice(c) >= filters.priceMin);
+  if (filters.priceMax != null) list = list.filter(c => getPrice(c) <= filters.priceMax);
   if (filters.rkn) list = list.filter(c => c.rkn === true);
   if (filters.verified) list = list.filter(c => c.verified === true);
 
-  // Helper для CPM
-  const cpm = c => (c.price && c.reach) ? (c.price / c.reach * 1000) : Infinity;
+  // Helper для CPM (использует live-данные)
+  const cpm = c => {
+    const p = getPrice(c);
+    const r = getReach(c);
+    return (p && r) ? (p / r * 1000) : Infinity;
+  };
 
   switch (filters.sort) {
     case 'subs-desc': list.sort((a,b) => b.subs - a.subs); break;
     case 'subs-asc': list.sort((a,b) => a.subs - b.subs); break;
-    case 'price-asc': list.sort((a,b) => (a.price||0) - (b.price||0)); break;
-    case 'price-desc': list.sort((a,b) => (b.price||0) - (a.price||0)); break;
+    case 'price-asc': list.sort((a,b) => getPrice(a) - getPrice(b)); break;
+    case 'price-desc': list.sort((a,b) => getPrice(b) - getPrice(a)); break;
     case 'cpm-asc': list.sort((a,b) => cpm(a) - cpm(b)); break;
     case 'cpm-desc': list.sort((a,b) => {
       const ac = cpm(a), bc = cpm(b);
@@ -1993,23 +2008,27 @@ function renderChannelCard(c) {
   const gradient = `linear-gradient(135deg, ${topic.color[0]}, ${topic.color[1]})`;
   const safeName = c.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+  // Live-данные канала
+  const live = LIVE_DATA[c.id];
+  // Цена: из live > из миграции
+  const priceDisplay = (live && live.price_1_24) ? live.price_1_24 : c.price;
+
   let priceHtml;
   if (c.priceLabel) {
     priceHtml = `<div class="font-black text-sm gradient-text" style="font-family:'Unbounded'">${c.priceLabel}</div>`;
-  } else if (c.price > 0) {
-    priceHtml = `<div class="font-black text-lg gradient-text" style="font-family:'Unbounded'">${formatPrice(c.price)}</div>`;
+  } else if (priceDisplay > 0) {
+    priceHtml = `<div class="font-black text-lg gradient-text" style="font-family:'Unbounded'">${formatPrice(priceDisplay)}</div>`;
   } else {
     priceHtml = `<div class="font-black text-sm gradient-text" style="font-family:'Unbounded'">По запросу</div>`;
   }
 
   const fmtBadge = `<span class="format-badge">${c.formatNote || '1/24'}</span>`;
-  const cartBtn = c.price > 0
+  const cartBtn = priceDisplay > 0
     ? `<button class="cart-btn ${inCart ? 'cart-btn-remove' : 'cart-btn-add'}" onclick="toggleCart(${c.id})">${inCart ? 'Убрать' : 'В корзину'}</button>`
     : `<a href="${c.link}" target="_blank" rel="noopener" class="cart-btn cart-btn-add" style="text-decoration:none">Подробнее</a>`;
 
   const slug = SLUGS[c.id];
   // Аватар: 1) из live-данных бота 2) из статичной папки 3) буква
-  const live = LIVE_DATA[c.id];
   let avatarUrl = null;
   if (live && live.avatar_url) {
     avatarUrl = live.avatar_url;
@@ -2157,11 +2176,14 @@ function toggleCart(id) {
     cart.splice(existingIdx, 1);
   } else {
     const topic = TOPICS[channel.topic] || TOPICS.other;
+    // Цена: live-данные имеют приоритет над миграцией
+    const live = LIVE_DATA[channel.id];
+    const livePrice = (live && live.price_1_24) ? live.price_1_24 : (channel.price || 0);
     cart.push({
       channelId: channel.id,
       name: channel.name,
       format: channel.formatNote || '1/24',
-      price: channel.price || 0,
+      price: livePrice,
       color: topic.color || ['#64748B', '#475569'],
       letter: firstLetter(channel.name),
       topic: topic.label || 'Другое'
