@@ -123,8 +123,9 @@ export default async function handler(req, res) {
       }
 
       // 1b. Обновляем views последних 20 постов через forwardMessage
+      // Пропускаем посты помеченные как views_locked=true (недоступные)
       const posts = await supa(
-        `posts?channel_id=eq.${ch.id}&order=published_at.desc&limit=20&select=id,telegram_message_id,views`
+        `posts?channel_id=eq.${ch.id}&views_locked=eq.false&order=published_at.desc&limit=20&select=id,telegram_message_id,views`
       );
 
       for (const post of posts) {
@@ -168,7 +169,23 @@ export default async function handler(req, res) {
               results.views_updated++;
             }
           } else if (!fwd.ok) {
-            results.errors.push(`forwardMessage(${ch.name}, msg ${post.telegram_message_id}): ${fwd.description}`);
+            // Если пост недоступен (удалён, бот потерял права) — помечаем чтобы пропускать в будущем
+            const desc = (fwd.description || '').toLowerCase();
+            const isPostUnavailable = desc.includes('message to forward not found')
+              || desc.includes('message_id_invalid')
+              || desc.includes('chat not found');
+            if (isPostUnavailable) {
+              try {
+                await supa(`posts?id=eq.${post.id}`, {
+                  method: 'PATCH',
+                  prefer: 'return=minimal',
+                  body: JSON.stringify({ views_locked: true }),
+                });
+              } catch (e) { /* ignore */ }
+              // Не записываем в errors — это ожидаемая ситуация
+            } else {
+              results.errors.push(`forwardMessage(${ch.name}, msg ${post.telegram_message_id}): ${fwd.description}`);
+            }
           }
         } catch (e) {
           results.errors.push(`fwd(${ch.name}): ${e.message}`);
