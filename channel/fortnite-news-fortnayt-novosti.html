@@ -536,7 +536,7 @@
         </div>
         <div class="mb-6">
           <div class="text-xs font-bold uppercase tracking-wider mb-1" style="color:var(--vault-ink-muted)">Цена</div>
-          <div class="text-3xl font-black gradient-text" style="font-family:'Unbounded'">14 000 ₽</div>
+          <div class="text-3xl font-black gradient-text" style="font-family:'Unbounded'" id="price-1-24">14 000 ₽</div>
         </div>
         <ul class="space-y-2 mb-6 text-sm font-medium" style="color:var(--vault-ink-muted)">
           <li class="flex items-start gap-2">
@@ -552,7 +552,7 @@
             <span>Охват 24ч: ~37K</span>
           </li>
         </ul>
-        <button onclick="addToCart('1/24', 14000)" class="btn-primary w-full justify-center">
+        <button id="btn-add-1-24" onclick="addToCart(\'1/24\', 14000)" class="btn-primary w-full justify-center">
           В корзину
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
         </button>
@@ -566,7 +566,7 @@
         </div>
         <div class="mb-6">
           <div class="text-xs font-bold uppercase tracking-wider mb-1" style="color:var(--vault-ink-muted)">Цена</div>
-          <div class="text-3xl font-black gradient-text" style="font-family:'Unbounded'">21 500 ₽</div>
+          <div class="text-3xl font-black gradient-text" style="font-family:'Unbounded'" id="price-2-48">21 500 ₽</div>
         </div>
         <ul class="space-y-2 mb-6 text-sm font-medium" style="color:var(--vault-ink-muted)">
           <li class="flex items-start gap-2">
@@ -582,7 +582,7 @@
             <span>Охват 48ч: ~56K</span>
           </li>
         </ul>
-        <button onclick="addToCart('2/48', 21500)" class="btn-primary w-full justify-center">
+        <button id="btn-add-2-48" onclick="addToCart(\'2/48\', 21500)" class="btn-primary w-full justify-center">
           В корзину
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
         </button>
@@ -596,7 +596,7 @@
         </div>
         <div class="mb-6">
           <div class="text-xs font-bold uppercase tracking-wider mb-1" style="color:var(--vault-ink-muted)">Цена</div>
-          <div class="text-3xl font-black gradient-text" style="font-family:'Unbounded'">28 000 ₽</div>
+          <div class="text-3xl font-black gradient-text" style="font-family:'Unbounded'" id="price-3-72">28 000 ₽</div>
         </div>
         <ul class="space-y-2 mb-6 text-sm font-medium" style="color:var(--vault-ink-muted)">
           <li class="flex items-start gap-2">
@@ -612,7 +612,7 @@
             <span>Охват 72ч: ~67K</span>
           </li>
         </ul>
-        <button onclick="addToCart('3/72', 28000)" class="btn-primary w-full justify-center">
+        <button id="btn-add-3-72" onclick="addToCart(\'3/72\', 28000)" class="btn-primary w-full justify-center">
           В корзину
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
         </button>
@@ -899,6 +899,9 @@
     // 3b. Обновить охват и прочие метрики
     updateLiveStats(data.stats, data.channel);
     
+    // 3c. Обновить цены на форматы из БД (вместо коэффициентов)
+    updatePrices(data.channel);
+    
     // 4. Если есть аватар в БД — подменить (опционально)
     if (data.channel.avatar_url) {
       const heroAvatarDiv = document.querySelector('.channel-hero-avatar');
@@ -958,6 +961,37 @@ function updateSubscribersCount(count) {
   const subsEl = document.getElementById('metric-subs');
   if (subsEl) {
     subsEl.textContent = formatNum(count);
+  }
+}
+
+function updatePrices(channelData) {
+  if (!channelData) return;
+  
+  // Форматирование цены: "3 000 ₽"
+  const fmt = (v) => v.toLocaleString('ru-RU').replace(/,/g, ' ') + ' ₽';
+  
+  // 2/48
+  if (channelData.price_2_48) {
+    const el = document.getElementById('price-2-48');
+    if (el) el.textContent = fmt(channelData.price_2_48);
+    const btn = document.getElementById('btn-add-2-48');
+    if (btn) btn.setAttribute('onclick', `addToCart('2/48', ${channelData.price_2_48})`);
+  }
+  
+  // 3/72
+  if (channelData.price_3_72) {
+    const el = document.getElementById('price-3-72');
+    if (el) el.textContent = fmt(channelData.price_3_72);
+    const btn = document.getElementById('btn-add-3-72');
+    if (btn) btn.setAttribute('onclick', `addToCart('3/72', ${channelData.price_3_72})`);
+  }
+  
+  // 1/24 (на всякий случай — обновляем если в БД отличается от HTML)
+  if (channelData.price_1_24) {
+    const el = document.getElementById('price-1-24');
+    if (el) el.textContent = fmt(channelData.price_1_24);
+    const btn = document.getElementById('btn-add-1-24');
+    if (btn) btn.setAttribute('onclick', `addToCart('1/24', ${channelData.price_1_24})`);
   }
 }
 
