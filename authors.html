@@ -792,7 +792,7 @@
           <label class="platform-option" data-platform="telegram">
             <input type="radio" name="platform" value="telegram" checked class="sr-only">
             <div class="platform-card">
-              <div class="text-2xl mb-1">✈️</div>
+              <img src="/partners/telegram-icon.png" alt="Telegram" class="platform-icon" loading="lazy">
               <div class="font-bold text-sm">Telegram</div>
               <div class="text-xs opacity-70">Live-статистика через бота</div>
             </div>
@@ -800,7 +800,7 @@
           <label class="platform-option" data-platform="max">
             <input type="radio" name="platform" value="max" class="sr-only">
             <div class="platform-card">
-              <div class="text-2xl mb-1">📱</div>
+              <img src="/partners/max-icon.svg" alt="MAX" class="platform-icon" loading="lazy">
               <div class="font-bold text-sm">MAX</div>
               <div class="text-xs opacity-70">Ручная модерация</div>
             </div>
@@ -1003,6 +1003,14 @@
     .platform-card:hover {
       background: rgba(255,255,255,0.12);
       border-color: rgba(255,255,255,0.3);
+    }
+    .platform-icon {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 8px;
+      display: block;
+      border-radius: 50%;
+      object-fit: cover;
     }
     .platform-option input[type="radio"]:checked + .platform-card {
       background: rgba(10,115,232,0.25);
