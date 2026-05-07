@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   try {
     // Берём ВСЕ одобренные каналы — и из миграции (с site_id), и новые (без)
     const channels = await supa(
-      `channels?status=eq.approved&select=id,site_id,slug,name,topic,topic_label,bot_is_admin,subscribers,avg_reach,avg_reach_24h,avatar_url,price_1_24,price_2_48,price_3_72,link,rkn,verified`
+      `channels?status=eq.approved&select=id,site_id,slug,name,topic,topic_label,platform,bot_is_admin,subscribers,avg_reach,avg_reach_24h,avatar_url,price_1_24,price_2_48,price_3_72,link,rkn,verified`
     );
 
     // Преобразуем в map по site_id для быстрого доступа в каталоге
@@ -53,6 +53,7 @@ export default async function handler(req, res) {
 
       const summary = {
         slug: ch.slug,
+        platform: ch.platform || 'telegram',
         bot: !!ch.bot_is_admin,
         subscribers: ch.subscribers || null,
         avg_reach: ch.avg_reach || null,

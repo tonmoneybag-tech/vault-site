@@ -433,8 +433,10 @@ async function handleModerationCallback(query) {
   }
 
   if (action === 'approve') {
-    // ⚠️ Проверяем: бот должен быть админом в канале
-    if (!channel.bot_is_admin || !channel.telegram_chat_id) {
+    // ⚠️ Проверяем: бот должен быть админом в канале (только для Telegram)
+    // Для MAX этого не требуется — туда бот не может быть добавлен через Bot API
+    const isMax = channel.platform === 'max';
+    if (!isMax && (!channel.bot_is_admin || !channel.telegram_chat_id)) {
       await tgCall('answerCallbackQuery', {
         callback_query_id: query.id,
         text: '⚠️ Бот не добавлен в канал. Попросите автора добавить @vault_analytics_bot админом, потом одобрите снова',

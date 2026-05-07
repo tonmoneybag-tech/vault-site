@@ -56,9 +56,12 @@ function escapeHtml(s) {
 }
 
 // Извлекаем username из ссылки t.me/...
-function extractUsername(link) {
+function extractUsername(link, platform = 'telegram') {
   if (!link) return null;
-  // Приватные ссылки t.me/+xxx — нет username
+  if (platform === 'max') {
+    const match = link.match(/(?:max\.ru|oneme\.ru)\/([a-zA-Z0-9_]+)/);
+    return match ? match[1] : null;
+  }
   if (link.includes('/+') || link.includes('/joinchat/')) return null;
   const match = link.match(/t\.me\/([a-zA-Z0-9_]+)/);
   return match ? match[1] : null;
@@ -127,19 +130,30 @@ export default async function handler(req, res) {
     const channelLink = (body.channel_link || '').trim();
     const channelName = (body.channel_name || '').trim();
     const topic = (body.topic || 'other').trim();
+    const platform = (body.platform === 'max' ? 'max' : 'telegram');
     const price124 = parseInt(body.price_1_24) || 0;
     const price248 = parseInt(body.price_2_48) || null;
     const price372 = parseInt(body.price_3_72) || null;
     const subscribers = parseInt(body.subscribers) || 0;
     const description = (body.description || '').trim();
     const submitterTelegram = (body.submitter_telegram || '').trim();
+    const customLogoUrl = (body.logo_url || '').trim() || null;
 
     if (!channelLink || !channelName || !submitterTelegram) {
       return res.status(400).json({ error: 'Заполните все обязательные поля' });
     }
 
-    if (!channelLink.includes('t.me/')) {
-      return res.status(400).json({ error: 'Ссылка должна быть на t.me' });
+    // Валидация ссылки в зависимости от платформы
+    if (platform === 'telegram' && !channelLink.includes('t.me/')) {
+      return res.status(400).json({ error: 'Для Telegram ссылка должна быть на t.me' });
+    }
+    if (platform === 'max' && !channelLink.includes('max.ru') && !channelLink.includes('oneme.ru')) {
+      return res.status(400).json({ error: 'Для MAX ссылка должна быть на max.ru или oneme.ru' });
+    }
+
+    // Минимум 5000 подписчиков
+    if (subscribers < 5000) {
+      return res.status(400).json({ error: 'Минимум 5000 подписчиков для публикации в каталоге' });
     }
 
     if (price124 < 100) {
@@ -158,7 +172,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Описание слишком длинное (макс. 500 симв.)' });
     }
 
-    const username = extractUsername(channelLink);
+    const username = extractUsername(channelLink, platform);
 
     // Проверяем нет ли дубликата (по ссылке или username)
     let existing = null;
@@ -204,6 +218,7 @@ export default async function handler(req, res) {
         link: channelLink,
         topic: topic,
         topic_label: TOPIC_LABELS[topic] || 'Другое',
+        platform: platform,
         subscribers: subscribers,
         price_1_24: price124,
         price_2_48: price248,
@@ -212,6 +227,7 @@ export default async function handler(req, res) {
         verified: false,
         bot_is_admin: false,
         claim_code: claimCode,
+        avatar_url: customLogoUrl,
         status: 'pending',
         submitted_at: new Date().toISOString(),
         submitted_by_telegram: submitterTelegram,
@@ -233,8 +249,10 @@ export default async function handler(req, res) {
         price372 ? `3/72: ${price372.toLocaleString('ru-RU')}₽` : null,
       ].filter(Boolean).join(' · ');
 
+      const platformLabel = platform === 'max' ? '📱 MAX' : '✈️ Telegram';
       const msgText =
         `📥 <b>Новая заявка на канал</b>\n\n` +
+        `<b>Платформа:</b> ${platformLabel}\n` +
         `<b>Название:</b> ${escapeHtml(channelName)}\n` +
         `<b>Ссылка:</b> ${escapeHtml(channelLink)}\n` +
         `<b>Тематика:</b> ${escapeHtml(TOPIC_LABELS[topic] || 'Другое')}\n` +
@@ -242,6 +260,7 @@ export default async function handler(req, res) {
         `<b>Цены:</b> ${priceText || 'не указаны'}\n` +
         `<b>Контакт:</b> ${escapeHtml(submitterTelegram)}\n` +
         (description ? `\n<b>Описание:</b>\n${escapeHtml(description.substring(0, 300))}\n` : '') +
+        (platform === 'max' ? `\n⚠️ <i>MAX-канал — модерация без проверки бота. Связь с автором — вручную.</i>\n` : '') +
         `\n<i>Slug: ${slug}\nClaim: ${claimCode}</i>`;
 
       await tgCall('sendMessage', {
