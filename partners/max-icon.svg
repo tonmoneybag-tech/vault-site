@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs>
+    <linearGradient id="maxGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3D7BFF"/>
+      <stop offset="0.5" stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#A855F7"/>
+    </linearGradient>
+  </defs>
+  <circle cx="120" cy="120" r="120" fill="url(#maxGrad)"/>
+  <text x="120" y="160" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif" font-size="110" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="-4">M</text>
+</svg>
