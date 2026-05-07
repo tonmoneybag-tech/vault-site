@@ -785,9 +785,46 @@
       <!-- Honeypot для защиты от ботов (невидимое поле) -->
       <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
 
+      <!-- Платформа -->
+      <div>
+        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Платформа *</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="platform-option" data-platform="telegram">
+            <input type="radio" name="platform" value="telegram" checked class="sr-only">
+            <div class="platform-card">
+              <div class="text-2xl mb-1">✈️</div>
+              <div class="font-bold text-sm">Telegram</div>
+              <div class="text-xs opacity-70">Live-статистика через бота</div>
+            </div>
+          </label>
+          <label class="platform-option" data-platform="max">
+            <input type="radio" name="platform" value="max" class="sr-only">
+            <div class="platform-card">
+              <div class="text-2xl mb-1">📱</div>
+              <div class="font-bold text-sm">MAX</div>
+              <div class="text-xs opacity-70">Ручная модерация</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Жёлтая плашка для Telegram -->
+      <div id="telegram-notice" class="rounded-xl p-3" style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.4)">
+        <div class="text-xs font-medium" style="color:rgba(255,255,255,0.9)">
+          ⚠️ Перед подачей <a href="https://t.me/vault_analytics_bot" target="_blank" class="underline font-bold" style="color:white">добавьте @vault_analytics_bot</a> админом в канал — без него заявка не пройдёт модерацию.
+        </div>
+      </div>
+
+      <!-- Зелёная плашка для MAX -->
+      <div id="max-notice" class="rounded-xl p-3 hidden" style="background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.4)">
+        <div class="text-xs font-medium" style="color:rgba(255,255,255,0.9)">
+          ℹ️ MAX-каналы модерируются вручную. Live-статистика недоступна — данные вы указываете сами, на доверии.
+        </div>
+      </div>
+
       <div>
         <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Ссылка на канал *</label>
-        <input type="text" name="channel_link" required placeholder="https://t.me/your_channel" class="form-input">
+        <input type="text" id="channel-link-input" name="channel_link" required placeholder="https://t.me/your_channel" class="form-input">
       </div>
 
       <div>
@@ -795,10 +832,25 @@
         <input type="text" name="channel_name" required placeholder="Как назвать в каталоге" class="form-input">
       </div>
 
+      <!-- Логотип канала (для MAX) -->
+      <div id="logo-upload-block" class="hidden">
+        <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Логотип канала *</label>
+        <div class="flex items-center gap-3">
+          <div id="logo-preview" class="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:rgba(255,255,255,0.1); border:2px dashed rgba(255,255,255,0.3); color:rgba(255,255,255,0.5)">JPG/PNG</div>
+          <div class="flex-1">
+            <input type="file" id="logo-file" accept="image/jpeg,image/png,image/webp" class="hidden">
+            <button type="button" id="logo-pick-btn" class="px-4 py-2 rounded-lg text-sm font-bold" style="background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.2)">📷 Выбрать файл</button>
+            <input type="hidden" name="logo_url" id="logo-url-input">
+            <div class="text-xs mt-1" style="color:rgba(255,255,255,0.6)">JPG / PNG / WEBP до 2MB</div>
+          </div>
+        </div>
+        <div id="logo-upload-status" class="text-xs mt-2 hidden"></div>
+      </div>
+
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Подписчиков</label>
-          <input type="text" name="subscribers" placeholder="Опционально, например 50000" class="form-input">
+          <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Подписчиков *</label>
+          <input type="text" name="subscribers" required placeholder="мин. 5000" class="form-input" inputmode="numeric">
         </div>
         <div>
           <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Тематика *</label>
@@ -936,6 +988,28 @@
     }
     .form-input::placeholder { color: #94A3B8; font-weight: 500; }
     select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M6 9l6 6 6-6' stroke='%23111A2B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right: 44px; }
+    
+    /* Platform cards (Telegram / MAX) */
+    .platform-card {
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      color: white;
+    }
+    .platform-card:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .platform-option input[type="radio"]:checked + .platform-card {
+      background: rgba(10,115,232,0.25);
+      border-color: rgba(90,163,242,0.8);
+    }
+    .platform-option { display: block; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
   </style>
 
   <script>
@@ -946,6 +1020,98 @@
       const successBox = document.getElementById('apply-success');
       const errorBox = document.getElementById('apply-error');
       const errorText = document.getElementById('apply-error-text');
+
+      // === Переключение платформы ===
+      const tgNotice = document.getElementById('telegram-notice');
+      const maxNotice = document.getElementById('max-notice');
+      const logoBlock = document.getElementById('logo-upload-block');
+      const linkInput = document.getElementById('channel-link-input');
+      const platformRadios = form.querySelectorAll('input[name="platform"]');
+
+      function updatePlatformUI() {
+        const selected = form.querySelector('input[name="platform"]:checked');
+        const platform = selected ? selected.value : 'telegram';
+        if (platform === 'max') {
+          tgNotice.classList.add('hidden');
+          maxNotice.classList.remove('hidden');
+          logoBlock.classList.remove('hidden');
+          linkInput.placeholder = 'https://max.ru/your_channel';
+        } else {
+          tgNotice.classList.remove('hidden');
+          maxNotice.classList.add('hidden');
+          logoBlock.classList.add('hidden');
+          linkInput.placeholder = 'https://t.me/your_channel';
+        }
+      }
+      platformRadios.forEach(r => r.addEventListener('change', updatePlatformUI));
+      updatePlatformUI();
+
+      // === Загрузка логотипа ===
+      const logoFile = document.getElementById('logo-file');
+      const logoPickBtn = document.getElementById('logo-pick-btn');
+      const logoPreview = document.getElementById('logo-preview');
+      const logoUrlInput = document.getElementById('logo-url-input');
+      const logoStatus = document.getElementById('logo-upload-status');
+
+      logoPickBtn.addEventListener('click', () => logoFile.click());
+
+      logoFile.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+          logoStatus.textContent = '❌ Файл больше 2MB';
+          logoStatus.style.color = '#FCA5A5';
+          logoStatus.classList.remove('hidden');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          logoPreview.innerHTML = `<img src="${ev.target.result}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+          logoPreview.style.border = '2px solid rgba(16,185,129,0.6)';
+        };
+        reader.readAsDataURL(file);
+
+        logoStatus.textContent = '⏳ Загружаем...';
+        logoStatus.style.color = 'rgba(255,255,255,0.7)';
+        logoStatus.classList.remove('hidden');
+        logoPickBtn.disabled = true;
+
+        try {
+          const base64 = await new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result);
+            r.onerror = reject;
+            r.readAsDataURL(file);
+          });
+
+          const res = await fetch('/api/upload-logo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              base64: base64,
+              filename: file.name,
+              mimeType: file.type,
+            })
+          });
+
+          const result = await res.json();
+          if (res.ok && result.ok && result.url) {
+            logoUrlInput.value = result.url;
+            logoStatus.textContent = '✅ Логотип загружен';
+            logoStatus.style.color = '#86EFAC';
+          } else {
+            throw new Error(result.error || 'Ошибка загрузки');
+          }
+        } catch (err) {
+          logoStatus.textContent = '❌ ' + (err.message || 'Не удалось загрузить');
+          logoStatus.style.color = '#FCA5A5';
+          logoUrlInput.value = '';
+        } finally {
+          logoPickBtn.disabled = false;
+        }
+      });
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -972,16 +1138,37 @@
           return cleaned ? parseInt(cleaned) : 0;
         };
 
+        const platform = formData.get('platform') || 'telegram';
+
+        // Для MAX логотип обязателен
+        if (platform === 'max' && !logoUrlInput.value) {
+          if (errorText) errorText.textContent = 'Загрузите логотип канала для MAX';
+          errorBox.classList.remove('hidden');
+          errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        // Валидация подписчиков на клиенте
+        const subs = parseNum(formData.get('subscribers'));
+        if (subs < 5000) {
+          if (errorText) errorText.textContent = 'Минимум 5000 подписчиков для публикации в каталоге';
+          errorBox.classList.remove('hidden');
+          errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
         const data = {
+          platform: platform,
           channel_link: (formData.get('channel_link') || '').trim(),
           channel_name: (formData.get('channel_name') || '').trim(),
           topic: (formData.get('topic') || '').trim(),
-          subscribers: parseNum(formData.get('subscribers')),
+          subscribers: subs,
           price_1_24: parseNum(formData.get('price_1_24')),
           price_2_48: parseNum(formData.get('price_2_48')),
           price_3_72: parseNum(formData.get('price_3_72')),
           submitter_telegram: submitterTg,
           description: (formData.get('description') || '').trim(),
+          logo_url: logoUrlInput.value || null,
         };
 
         submitBtn.disabled = true;
