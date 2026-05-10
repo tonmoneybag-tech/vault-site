@@ -151,9 +151,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Для MAX ссылка должна быть на max.ru или oneme.ru' });
     }
 
-    // Минимум 5000 подписчиков
-    if (subscribers < 5000) {
-      return res.status(400).json({ error: 'Минимум 5000 подписчиков для публикации в каталоге' });
+    // Минимум подписчиков: 5000 для Telegram, 500 для MAX
+    const minSubs = platform === 'max' ? 500 : 5000;
+    if (subscribers < minSubs) {
+      return res.status(400).json({
+        error: `Минимум ${minSubs.toLocaleString('ru-RU')} подписчиков для публикации в каталоге${platform === 'max' ? ' (MAX)' : ''}`
+      });
     }
 
     if (price124 < 100) {
