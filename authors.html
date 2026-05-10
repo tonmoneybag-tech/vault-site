@@ -850,7 +850,7 @@
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Подписчиков *</label>
-          <input type="text" name="subscribers" required placeholder="мин. 5000" class="form-input" inputmode="numeric">
+          <input type="text" id="subscribers-input" name="subscribers" required placeholder="мин. 5000" class="form-input" inputmode="numeric">
         </div>
         <div>
           <label class="block text-sm font-bold mb-2" style="color:rgba(255,255,255,0.9)">Тематика *</label>
@@ -1039,16 +1039,19 @@
       function updatePlatformUI() {
         const selected = form.querySelector('input[name="platform"]:checked');
         const platform = selected ? selected.value : 'telegram';
+        const subsInput = document.getElementById('subscribers-input');
         if (platform === 'max') {
           tgNotice.classList.add('hidden');
           maxNotice.classList.remove('hidden');
           logoBlock.classList.remove('hidden');
           linkInput.placeholder = 'https://max.ru/your_channel';
+          if (subsInput) subsInput.placeholder = 'мин. 500';
         } else {
           tgNotice.classList.remove('hidden');
           maxNotice.classList.add('hidden');
           logoBlock.classList.add('hidden');
           linkInput.placeholder = 'https://t.me/your_channel';
+          if (subsInput) subsInput.placeholder = 'мин. 5000';
         }
       }
       platformRadios.forEach(r => r.addEventListener('change', updatePlatformUI));
@@ -1156,10 +1159,11 @@
           return;
         }
 
-        // Валидация подписчиков на клиенте
+        // Валидация подписчиков на клиенте: 5000 для TG, 500 для MAX
         const subs = parseNum(formData.get('subscribers'));
-        if (subs < 5000) {
-          if (errorText) errorText.textContent = 'Минимум 5000 подписчиков для публикации в каталоге';
+        const minSubs = platform === 'max' ? 500 : 5000;
+        if (subs < minSubs) {
+          if (errorText) errorText.textContent = `Минимум ${minSubs.toLocaleString('ru-RU')} подписчиков для публикации в каталоге${platform === 'max' ? ' (MAX)' : ''}`;
           errorBox.classList.remove('hidden');
           errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
